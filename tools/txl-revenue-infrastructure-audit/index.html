@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Revenue Infrastructure Audit</title>
+<meta name="description" content="Quantify what founder dependency and the 17 revenue leaks are costing your service business each year, then get the fix sequence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ============================================================
+   ThriveXLabs — Revenue Infrastructure Audit
+   Single-file lead magnet. No build step, no dependencies.
+   Configuration lives in the CONFIG block in the script below.
+   ============================================================ */
+
+:root{
+  /* ---- Brand palette ----------------------------------------
+     PLACEHOLDER SOURCE: derived from the ThriveXLabs audit_1.html
+     you supplied, because no logo SVG was attached. When you drop
+     in the real TXL SVG, replace the six --brand* / semantic hexes
+     below and nothing else needs to change. */
+  --obsidian:#15140F;
+  --raised:#1E1C15;
+  --raised-2:#262319;
+  --sunk:#100F0B;
+  --line:#3A342A;
+  --line-soft:#2B261E;
+
+  --paper:#F2EEE2;
+  --muted:#9C9686;
+  --faint:#6F6858;
+
+  --brass:#C9A227;
+  --brass-lt:#E8CB68;
+  --brass-dim:#2C2512;
+
+  --rust:#B5482B;
+  --rust-lt:#DC8163;
+  --rust-dim:#2E1811;
+
+  --sage:#7E9767;
+  --sage-lt:#A9C08D;
+  --sage-dim:#1A2415;
+
+  --amber:#C9862B;
+  --amber-dim:#2B1F10;
+
+  --d:'Fraunces','Iowan Old Style',Georgia,serif;
+  --s:'Archivo','Helvetica Neue',Arial,sans-serif;
+  --m:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --r:3px;
+  --rail-w:236px;
+  --shadow:0 1px 0 rgba(242,238,226,.04), 0 18px 40px -30px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--obsidian);
+  color:var(--paper);
+  font-family:var(--s);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4{margin:0;font-family:var(--d);font-weight:500;letter-spacing:.005em;line-height:1.14;text-wrap:balance}
+p{margin:0}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+a{color:var(--brass-lt);text-decoration-thickness:1px;text-underline-offset:2px}
+::selection{background:var(--brass);color:var(--obsidian)}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px;border-radius:2px}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--m)}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ---------- frame ---------- */
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:0 0}
+@media(min-width:900px){.wrap{padding-inline:36px}}
+
+/* ---------- masthead ---------- */
+.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  padding-block:22px 18px;border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--paper)}
+.logo svg{display:block;flex:0 0 auto}
+.logo .wm{font-family:var(--d);font-size:19px;font-weight:600;letter-spacing:-.01em;line-height:1}
+.logo .wm em{font-style:normal;color:var(--brass)}
+.mast-tag{margin-left:auto;font-family:var(--m);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--faint);text-align:right;max-width:30ch}
+
+/* ---------- hero ---------- */
+.hero{padding-block:40px 34px;border-bottom:1px solid var(--line)}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--m);font-size:10.5px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--brass);margin-bottom:18px}
+.eyebrow .pip{width:7px;height:7px;border-radius:50%;background:var(--rust);
+  box-shadow:0 0 0 3px var(--rust-dim)}
+.hero h1{font-size:clamp(33px,5.1vw,58px);max-width:20ch;font-weight:500}
+.hero h1 em{font-style:italic;color:var(--brass-lt)}
+.hero .lede{margin-top:20px;max-width:64ch;font-size:16.5px;color:var(--muted);line-height:1.62}
+.hero .lede b{color:var(--paper);font-weight:600}
+.hero-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.chip{font-family:var(--m);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:6px 13px;background:var(--raised)}
+.chip b{color:var(--brass-lt);font-weight:500}
+
+/* ---------- app shell ---------- */
+.app{display:grid;grid-template-columns:1fr;gap:26px;padding-block:32px 0;align-items:start}
+@media(min-width:900px){.app{grid-template-columns:var(--rail-w) minmax(0,1fr);gap:52px}}
+
+/* ---------- rail ---------- */
+.rail{display:flex;flex-direction:column;gap:0}
+@media(min-width:900px){.rail{position:sticky;top:20px;align-self:start}}
+.rail-head{font-family:var(--m);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:12px}
+.steps{display:flex;flex-direction:column;gap:1px;list-style:none;margin:0;padding:0}
+@media(max-width:899px){
+  .steps{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:12px;
+    border-bottom:1px solid var(--line);scrollbar-width:thin}
+  .steps li{flex:0 0 auto}
+}
+.steps li{display:flex;align-items:center;gap:10px;padding:9px 0 9px 13px;font-size:13px;
+  color:var(--faint);border-left:2px solid transparent;transition:color .18s}
+@media(max-width:899px){.steps li{border-left:0;border-bottom:2px solid transparent;padding:6px 10px 8px;white-space:nowrap}}
+.steps li .dot{width:6px;height:6px;border-radius:50%;background:var(--line);flex:0 0 auto;transition:background .18s}
+.steps li.done{color:var(--muted)}
+.steps li.done .dot{background:var(--sage)}
+.steps li.active{color:var(--paper);border-left-color:var(--brass)}
+@media(max-width:899px){.steps li.active{border-bottom-color:var(--brass)}}
+.steps li.active .dot{background:var(--brass);box-shadow:0 0 0 3px var(--brass-dim)}
+
+.ticker{margin-top:24px;border:1px solid var(--line);border-radius:var(--r);background:var(--raised);overflow:hidden}
+@media(max-width:899px){.ticker{display:none}}
+.ticker .tk-h{padding:10px 13px 8px;border-bottom:1px solid var(--line-soft);background:var(--raised-2);
+  font-family:var(--m);font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.ticker .tk-b{padding:13px}
+.ticker .tk-n{font-family:var(--d);font-size:27px;font-weight:600;color:var(--rust-lt);
+  font-variant-numeric:tabular-nums;line-height:1.05;letter-spacing:-.02em}
+.ticker .tk-s{font-family:var(--m);font-size:10px;color:var(--faint);margin-top:6px;letter-spacing:.05em}
+.ticker .tk-bar{height:3px;background:var(--sunk);margin-top:12px;border-radius:2px;overflow:hidden}
+.ticker .tk-bar i{display:block;height:100%;background:var(--brass);width:0%;transition:width .3s ease}
+.ticker .tk-p{font-family:var(--m);font-size:9.5px;color:var(--faint);margin-top:7px;letter-spacing:.06em}
+
+/* ---------- panel ---------- */
+.panel{min-width:0}
+.step-kick{font-family:var(--m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--brass);margin-bottom:9px}
+.step-title{font-size:clamp(25px,3.4vw,34px);margin-bottom:10px}
+.step-sub{color:var(--muted);max-width:66ch;font-size:14.5px;margin-bottom:28px;line-height:1.6}
+.step-sub b{color:var(--paper);font-weight:600}
+
+.grid2{display:grid;grid-template-columns:1fr;gap:4px 30px}
+@media(min-width:620px){.grid2{grid-template-columns:1fr 1fr}}
+
+.field{margin-bottom:21px;min-width:0}
+.field > label,.field .flabel{display:block;font-size:13.5px;color:var(--paper);margin-bottom:7px;font-weight:500;line-height:1.35}
+.field .hint{display:block;font-size:11.5px;color:var(--faint);margin-top:6px;line-height:1.45}
+.field .bm{font-family:var(--m);font-size:10px;color:var(--brass);letter-spacing:.05em;font-weight:400}
+.inp{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:var(--r);
+  background:var(--raised);overflow:hidden}
+.inp:focus-within{border-color:var(--brass)}
+.inp .aff{display:flex;align-items:center;padding:0 11px;background:var(--raised-2);
+  font-family:var(--m);font-size:12px;color:var(--faint);border-right:1px solid var(--line-soft);flex:0 0 auto}
+.inp .aff.suf{border-right:0;border-left:1px solid var(--line-soft)}
+.inp input{flex:1 1 auto;min-width:0;width:100%;background:transparent;border:0;outline:none;
+  font-family:var(--m);font-size:15px;font-variant-numeric:tabular-nums;padding:11px 12px;color:var(--paper)}
+.inp input::placeholder{color:#544E42}
+.inp input[type=number]{-moz-appearance:textfield}
+.inp input::-webkit-outer-spin-button,.inp input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1 1 auto;min-width:88px;background:var(--raised);border:1px solid var(--line);
+  color:var(--muted);padding:9px 11px;font-size:12.5px;border-radius:var(--r);cursor:pointer;
+  transition:border-color .15s,color .15s,background .15s;text-align:center}
+.seg button:hover{border-color:var(--faint);color:var(--paper)}
+.seg button.sel{border-color:var(--brass);color:var(--paper);background:var(--brass-dim);font-weight:600}
+.seg.tri button.sel[data-val="Systemized"],.seg.tri button.sel[data-val="Yes"]{border-color:var(--sage);background:var(--sage-dim)}
+.seg.tri button.sel[data-val="Missing"],.seg.tri button.sel[data-val="No"]{border-color:var(--rust);background:var(--rust-dim)}
+
+details.adv{margin:4px 0 8px;border-top:1px solid var(--line);padding-top:16px}
+details.adv summary{cursor:pointer;color:var(--muted);font-size:13px;list-style:none;font-family:var(--m);
+  font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+details.adv summary::-webkit-details-marker{display:none}
+details.adv summary::before{content:"+ ";color:var(--brass)}
+details.adv[open] summary::before{content:"– "}
+details.adv .grid2{margin-top:20px}
+
+/* ---------- function rows ---------- */
+.frow{border-top:1px solid var(--line-soft);padding:17px 0}
+.frow:first-of-type{border-top:1px solid var(--line)}
+.frow-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.frow-h .fn{font-size:15px;font-weight:600;font-family:var(--s)}
+.frow-h .scope{font-family:var(--m);font-size:10px;letter-spacing:.06em;color:var(--faint);text-transform:uppercase}
+.frow-h .deleg{margin-left:auto;font-family:var(--m);font-size:10px;color:var(--brass);letter-spacing:.04em}
+.frow-b{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:680px){.frow-b{grid-template-columns:150px minmax(0,1fr);gap:22px;align-items:start}}
+.frow-b .q{font-size:13px;color:var(--muted);margin-bottom:7px;line-height:1.45}
+
+/* ---------- leak rows ---------- */
+.lsec{margin-bottom:30px}
+.lsec-h{display:flex;align-items:baseline;gap:12px;padding-bottom:9px;margin-bottom:4px;
+  border-bottom:1px solid var(--brass);flex-wrap:wrap}
+.lsec-h .rn{font-family:var(--m);font-size:11px;color:var(--brass);letter-spacing:.1em}
+.lsec-h h3{font-size:17px}
+.lsec-h .cnt{margin-left:auto;font-family:var(--m);font-size:10px;color:var(--faint);letter-spacing:.07em}
+.lrow{display:grid;grid-template-columns:1fr;gap:9px;padding:14px 0;border-bottom:1px solid var(--line-soft)}
+@media(min-width:760px){.lrow{grid-template-columns:minmax(0,1fr) 296px;gap:24px;align-items:center}}
+.lrow .lt{min-width:0}
+.lrow .lt .nm{font-size:14px;font-weight:600;line-height:1.35;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.lrow .lt .nm .no{font-family:var(--m);font-size:10.5px;color:var(--faint);font-weight:400;flex:0 0 auto}
+.lrow .lt .ask{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.45}
+
+/* ---------- nav ---------- */
+.nav{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+  margin-top:34px;padding-block:22px 46px;border-top:1px solid var(--line)}
+.btn{font-size:13.5px;padding:12px 22px;border-radius:var(--r);cursor:pointer;border:1px solid var(--line);
+  background:transparent;color:var(--muted);transition:.15s;font-weight:500;text-decoration:none;display:inline-block}
+.btn:hover{color:var(--paper);border-color:var(--faint)}
+.btn.primary{background:var(--brass);border-color:var(--brass);color:var(--obsidian);font-weight:700}
+.btn.primary:hover{background:var(--brass-lt);border-color:var(--brass-lt);color:var(--obsidian)}
+.btn.ghost-brass{border-color:var(--brass);color:var(--brass-lt)}
+.btn.ghost-brass:hover{background:var(--brass-dim);color:var(--paper)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.nav .spacer{flex:1 1 auto}
+.nav .note{font-family:var(--m);font-size:10px;color:var(--faint);letter-spacing:.06em}
+
+/* ---------- report ---------- */
+.rep-hero{display:grid;grid-template-columns:1fr;gap:28px;align-items:center;
+  border:1px solid var(--line);border-radius:var(--r);background:var(--raised);
+  box-shadow:var(--shadow);overflow:hidden;margin-bottom:22px}
+@media(min-width:800px){.rep-hero{grid-template-columns:266px minmax(0,1fr);gap:0}}
+.gauge-cell{padding:26px 22px;background:var(--sunk);border-bottom:1px solid var(--line)}
+@media(min-width:800px){.gauge-cell{border-bottom:0;border-right:1px solid var(--line);height:100%;
+  display:flex;flex-direction:column;justify-content:center}}
+.gauge-cell svg{display:block;width:100%;max-width:220px;height:auto;margin:0 auto}
+.gauge-cap{text-align:center;margin-top:8px}
+.gauge-cap .band{font-family:var(--d);font-size:17px;font-weight:600;color:var(--brass-lt)}
+.gauge-cap .bsub{font-family:var(--m);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);margin-top:5px}
+.rep-hero-b{padding:26px 24px}
+.rep-hero-b .kick{font-family:var(--m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--rust-lt);margin-bottom:11px}
+.rep-hero-b .big{font-family:var(--d);font-size:clamp(44px,7.4vw,78px);font-weight:600;line-height:.98;
+  letter-spacing:-.035em;color:var(--rust-lt);font-variant-numeric:tabular-nums}
+.rep-hero-b .per{font-family:var(--m);font-size:12px;color:var(--muted);margin-top:11px;letter-spacing:.03em}
+.rep-hero-b .read{margin-top:16px;font-size:14.5px;color:var(--paper);line-height:1.55;max-width:52ch;
+  border-left:2px solid var(--brass);padding-left:15px}
+
+.tiles{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:22px}
+@media(min-width:560px){.tiles{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--raised);padding:17px 18px 18px}
+.tile .tl{font-family:var(--m);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--faint)}
+.tile .tn{font-family:var(--d);font-size:30px;font-weight:600;margin:6px 0 3px;line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tile .tf{font-size:12px;color:var(--muted);line-height:1.45}
+.tile.loss .tn{color:var(--rust-lt)}
+.tile.dep .tn{color:var(--brass-lt)}
+.tile.ok .tn{color:var(--sage-lt)}
+
+.sec{margin:38px 0 0}
+.sec-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding-bottom:10px;
+  border-bottom:1px solid var(--line);margin-bottom:18px}
+.sec-h h2{font-size:22px}
+.sec-h .sh{margin-left:auto;font-family:var(--m);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint)}
+.sec-note{color:var(--muted);font-size:13.5px;max-width:70ch;margin-bottom:18px;line-height:1.6}
+
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.rt{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
+table.rt th{text-align:left;font-family:var(--m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);font-weight:400;padding:9px 11px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.rt th.r,table.rt td.r{text-align:right}
+table.rt td{padding:13px 11px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+table.rt tr:last-child td{border-bottom:0}
+table.rt tbody tr.tot td{border-top:1px solid var(--line);border-bottom:0;background:var(--sunk);font-weight:600}
+table.rt .nm{font-weight:600;color:var(--paper)}
+table.rt .sub{display:block;font-size:11.5px;color:var(--faint);margin-top:4px;line-height:1.45;font-weight:400;max-width:44ch}
+.amt{font-family:var(--m);font-size:13.5px;font-variant-numeric:tabular-nums;color:var(--rust-lt);white-space:nowrap}
+.amt.dep{color:var(--brass-lt)}
+.amt.zero{color:var(--faint)}
+.amt.pos{color:var(--sage-lt)}
+
+.pill{display:inline-block;padding:3px 8px;border-radius:2px;font-family:var(--m);font-size:10px;
+  letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;border:1px solid transparent}
+.pill.bad{background:var(--rust-dim);color:var(--rust-lt);border-color:#5A2A1C}
+.pill.mid{background:var(--amber-dim);color:#E0A54F;border-color:#503A18}
+.pill.good{background:var(--sage-dim);color:var(--sage-lt);border-color:#2E4023}
+.pill.info{background:var(--brass-dim);color:var(--brass-lt);border-color:#4A3D16}
+.pill.flat{background:var(--raised-2);color:var(--faint);border-color:var(--line)}
+
+/* stage bars */
+.stage{display:grid;grid-template-columns:1fr;gap:7px;padding:15px 0;border-bottom:1px solid var(--line-soft)}
+@media(min-width:720px){.stage{grid-template-columns:174px minmax(0,1fr) 92px 104px;gap:18px;align-items:center;padding:13px 0}}
+.stage:last-child{border-bottom:0}
+.stage .snm{font-size:13.5px;font-weight:600}
+.stage .snm i{display:block;font-style:normal;font-family:var(--m);font-size:10px;color:var(--faint);margin-top:3px;letter-spacing:.04em}
+.stage .track{position:relative;height:20px;background:var(--sunk);border:1px solid var(--line-soft);border-radius:2px}
+.stage .fill{position:absolute;inset:0 auto 0 0;background:var(--brass);border-radius:1px 0 0 1px;transition:width .3s ease}
+.stage.below .fill{background:var(--rust)}
+.stage.at .fill{background:var(--sage)}
+.stage .mk{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--paper);opacity:.5}
+.stage .mk::after{content:attr(data-l);position:absolute;top:-15px;left:50%;transform:translateX(-50%);
+  font-family:var(--m);font-size:9px;color:var(--muted);white-space:nowrap}
+.stage .sv{font-family:var(--m);font-size:13px;font-variant-numeric:tabular-nums;text-align:right}
+.stage.below .sv{color:var(--rust-lt)}
+.stage.at .sv{color:var(--sage-lt)}
+.stage .sg{font-family:var(--m);font-size:12px;font-variant-numeric:tabular-nums;text-align:right;color:var(--rust-lt)}
+.stage .sg.zero{color:var(--faint)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:15px;padding-top:13px;border-top:1px dashed var(--line);
+  font-family:var(--m);font-size:10px;color:var(--faint);letter-spacing:.05em}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.legend i.a{background:var(--rust)}.legend i.b{background:var(--brass)}.legend i.c{background:var(--sage)}
+.legend i.d{width:2px;height:12px;background:var(--paper);opacity:.5;border-radius:0}
+
+/* ledger */
+.ledger{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--raised)}
+.ledger .lr{display:flex;align-items:baseline;gap:14px;padding:13px 17px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+.ledger .lr:last-child{border-bottom:0}
+.ledger .lr .ll{font-size:13.5px;flex:1 1 200px;min-width:0}
+.ledger .lr .ll i{display:block;font-style:normal;font-size:11.5px;color:var(--faint);margin-top:3px;line-height:1.45}
+.ledger .lr .lv{font-family:var(--m);font-size:14px;font-variant-numeric:tabular-nums;color:var(--rust-lt);white-space:nowrap}
+.ledger .lr.adj{background:var(--sunk)}
+.ledger .lr.adj .lv{color:var(--sage-lt)}
+.ledger .lr.net{background:var(--brass-dim);border-top:1px solid var(--brass)}
+.ledger .lr.net .ll{font-weight:700;font-size:14.5px}
+.ledger .lr.net .lv{font-family:var(--d);font-size:24px;font-weight:600;color:var(--brass-lt)}
+
+/* leak cards */
+.lk{border-bottom:1px solid var(--line-soft);padding:17px 0}
+.lk:last-child{border-bottom:0}
+.lk-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.lk-h .no{font-family:var(--m);font-size:10.5px;color:var(--faint);letter-spacing:.06em;flex:0 0 auto}
+.lk-h h4{font-size:15px;font-weight:600;font-family:var(--s)}
+.lk-h .amt{margin-left:auto}
+.lk-b{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:740px){.lk-b{grid-template-columns:1fr 1fr;gap:12px 26px}}
+.lk-b .blk{border-left:2px solid var(--line);padding-left:14px;min-width:0}
+.lk-b .blk b{display:block;font-family:var(--m);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--faint);font-weight:400;margin-bottom:5px}
+.lk-b .blk p{font-size:13.2px;color:var(--muted);line-height:1.52}
+.lk-b .blk.fix{border-left-color:var(--brass)}
+.lk-b .blk.fix p{color:var(--paper)}
+
+/* roadmap */
+.road{display:flex;flex-direction:column}
+.ri{display:grid;grid-template-columns:1fr;gap:6px;padding:17px 0;border-bottom:1px solid var(--line-soft)}
+@media(min-width:680px){.ri{grid-template-columns:148px minmax(0,1fr) 108px;gap:22px;align-items:start}}
+.ri:last-child{border-bottom:0}
+.ri .ph{font-family:var(--m);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--brass)}
+.ri .ph i{display:block;font-style:normal;color:var(--faint);margin-top:4px;letter-spacing:.04em}
+.ri .rb .rn{font-size:14.5px;font-weight:600;margin-bottom:5px}
+.ri .rb .rd{font-size:13.2px;color:var(--muted);line-height:1.52}
+.ri .rv{font-family:var(--m);font-size:13px;font-variant-numeric:tabular-nums;color:var(--rust-lt);text-align:left}
+@media(min-width:680px){.ri .rv{text-align:right}}
+.ri .rv i{display:block;font-style:normal;font-size:9.5px;color:var(--faint);letter-spacing:.09em;
+  text-transform:uppercase;margin-top:4px}
+
+/* plan */
+.plan{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:var(--r);overflow:hidden}
+@media(min-width:720px){.plan{grid-template-columns:repeat(3,1fr)}}
+.pcol{background:var(--raised);padding:18px}
+.pcol h4{font-family:var(--m);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--brass);
+  margin-bottom:12px;font-weight:400}
+.pcol ul{margin:0;padding-left:17px;display:flex;flex-direction:column;gap:9px}
+.pcol li{font-size:13px;color:var(--muted);line-height:1.5}
+.pcol li b{color:var(--paper);font-weight:600}
+
+/* ---------- the gate ---------- */
+.gate-zone{position:relative;margin-top:34px}
+.gate-zone.locked > .gz-body{filter:blur(7px);pointer-events:none;user-select:none;
+  -webkit-user-select:none;opacity:.55;max-height:940px;overflow:hidden}
+.gate-zone.locked::after{content:"";position:absolute;inset:auto 0 0 0;height:300px;
+  background:linear-gradient(180deg,transparent,var(--obsidian) 78%);pointer-events:none}
+.gate-card{position:absolute;left:50%;top:104px;transform:translateX(-50%);z-index:5;width:min(560px,100%);
+  border:1px solid var(--brass);border-radius:var(--r);background:var(--raised);
+  box-shadow:0 30px 70px -30px rgba(0,0,0,.95);overflow:hidden}
+.gate-zone:not(.locked) .gate-card{display:none}
+.gate-card .gc-strip{height:3px;background:linear-gradient(90deg,var(--rust),var(--brass) 70%)}
+.gate-card .gc-in{padding:24px 24px 26px}
+.gate-card .gc-lock{font-family:var(--m);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--brass);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.gate-card h3{font-size:23px;margin-bottom:9px}
+.gate-card .gc-p{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:8px}
+.gate-card .gc-list{margin:14px 0 20px;padding:0;list-style:none;display:grid;gap:7px}
+.gate-card .gc-list li{font-size:13px;color:var(--paper);display:flex;gap:9px;align-items:flex-start;line-height:1.45}
+.gate-card .gc-list li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--brass);
+  flex:0 0 auto;margin-top:7px}
+.gform{display:grid;gap:12px}
+@media(min-width:520px){.gform .grow2{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
+.gform label{display:block;font-family:var(--m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:5px}
+.gform input,.gform select{width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:var(--r);
+  padding:10px 12px;font-size:14px;color:var(--paper);outline:none}
+.gform input:focus,.gform select:focus{border-color:var(--brass)}
+.gform input::placeholder{color:#544E42}
+.gform select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--faint) 50%),linear-gradient(135deg,var(--faint) 50%,transparent 50%);
+  background-position:calc(100% - 17px) 18px,calc(100% - 12px) 18px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
+.gform .gsubmit{margin-top:4px}
+.gform .gsubmit button{width:100%;padding:14px 18px;font-size:15px}
+.gmsg{font-family:var(--m);font-size:11px;line-height:1.5;letter-spacing:.03em;min-height:1em}
+.gmsg.err{color:var(--rust-lt)}
+.gmsg.ok{color:var(--sage-lt)}
+.gfine{font-family:var(--m);font-size:9.5px;color:var(--faint);letter-spacing:.04em;line-height:1.6;text-align:center}
+
+/* ---------- cta ---------- */
+.cta{margin-top:40px;border:1px solid var(--brass);border-radius:var(--r);background:var(--raised);overflow:hidden}
+.cta .strip{height:3px;background:linear-gradient(90deg,var(--brass),var(--rust) 88%)}
+.cta .cin{display:grid;grid-template-columns:1fr;gap:24px;padding:26px 26px 28px}
+@media(min-width:820px){.cta .cin{grid-template-columns:minmax(0,1fr) 316px;gap:40px;align-items:start}}
+.cta h3{font-size:24px;margin-bottom:10px}
+.cta .cp{font-size:14.5px;color:var(--muted);line-height:1.6;max-width:56ch}
+.cta .cp b{color:var(--paper);font-weight:600}
+.cta .inc{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:7px}
+.cta .inc li{font-size:13.2px;color:var(--paper);display:flex;gap:9px;align-items:flex-start;line-height:1.45}
+.cta .inc li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--sage);flex:0 0 auto;margin-top:7px}
+.cta-box{border:1px solid var(--line);border-radius:var(--r);background:var(--sunk);padding:19px}
+.cta-box .price{font-family:var(--d);font-size:40px;font-weight:600;line-height:1;letter-spacing:-.02em;
+  color:var(--brass-lt);font-variant-numeric:tabular-nums}
+.cta-box .anchor{font-family:var(--m);font-size:10.5px;color:var(--faint);letter-spacing:.05em;margin-top:9px;line-height:1.6}
+.cta-box .anchor b{color:var(--sage-lt);font-weight:500}
+.cta-box .btns{display:grid;gap:9px;margin-top:17px}
+.cta-box .btns .btn{text-align:center;padding:13px 16px;font-size:14px}
+.cta-box .terms{font-family:var(--m);font-size:9.5px;color:var(--faint);letter-spacing:.04em;
+  margin-top:11px;line-height:1.6;text-align:center}
+
+/* ---------- method / honesty ---------- */
+.method{margin-top:38px;border:1px solid var(--line);border-radius:var(--r);background:var(--sunk);padding:22px}
+.method h4{font-family:var(--m);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:13px;font-weight:400}
+.method ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:9px}
+.method li{font-size:13px;color:var(--muted);line-height:1.55}
+.method li b{color:var(--paper);font-weight:600}
+.method .calc{margin-top:16px;padding-top:15px;border-top:1px dashed var(--line);font-family:var(--m);
+  font-size:11px;color:var(--faint);line-height:1.8;letter-spacing:.03em}
+
+/* ---------- footer ---------- */
+footer.end{margin-top:52px;padding-block:24px 44px;border-top:1px solid var(--line);
+  display:grid;gap:14px}
+@media(min-width:720px){footer.end{grid-template-columns:1fr auto;align-items:end}}
+footer.end .fl{font-family:var(--m);font-size:10.5px;line-height:1.9;color:var(--faint);letter-spacing:.04em}
+footer.end .fl b{color:var(--muted);font-weight:400}
+footer.end .fr{font-family:var(--m);font-size:10.5px;letter-spacing:.06em;color:var(--faint);line-height:1.9}
+footer.end .fr a{color:var(--brass-lt);text-decoration:none}
+footer.end .fr a:hover{text-decoration:underline}
+
+.restart{background:none;border:0;padding:0;margin-top:6px;color:var(--faint);font-family:var(--m);
+  font-size:10.5px;letter-spacing:.06em;text-decoration:underline;cursor:pointer}
+.restart:hover{color:var(--muted)}
+
+/* ---------- mobile exposure bar ---------- */
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--raised);
+  border-top:1px solid var(--brass);display:flex;align-items:center;gap:13px;
+  padding:10px 20px;padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px));
+  box-shadow:0 -10px 30px -18px rgba(0,0,0,.9)}
+@media(min-width:900px){.mbar{display:none}}
+.mbar .ml{font-family:var(--m);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);line-height:1.3}
+.mbar .mn{font-family:var(--d);font-size:21px;font-weight:600;color:var(--rust-lt);
+  font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.02em}
+.mbar .mp{margin-left:auto;font-family:var(--m);font-size:9.5px;color:var(--brass);letter-spacing:.06em;text-align:right}
+@media(max-width:899px){body{padding-bottom:70px}}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- print ---------- */
+@media print{
+  :root{--obsidian:#fff;--raised:#fff;--raised-2:#fafafa;--sunk:#fafafa;
+    --paper:#111;--muted:#444;--faint:#777;--line:#bbb;--line-soft:#ddd;
+    --brass:#8a6f10;--brass-lt:#6d5709;--brass-dim:#f6f0dc;
+    --rust:#9c3d24;--rust-lt:#8f3720;--rust-dim:#faeae5;
+    --sage:#4f6440;--sage-lt:#41542f;--sage-dim:#eef3e8}
+  body{background:#fff;color:#111;font-size:11.5pt;padding-bottom:0}
+  .masthead,.hero-meta,.rail,.nav,.mbar,.cta-box .btns,.restart,.gate-card{display:none!important}
+  .app{display:block}
+  .wrap{max-width:none;padding-inline:0}
+  .gate-zone.locked > .gz-body{filter:none!important;opacity:1!important;max-height:none!important;overflow:visible!important}
+  .gate-zone.locked::after{display:none}
+  .sec,.rep-hero,.tiles,.cta,.method,.plan,.ledger{break-inside:avoid}
+  .sec{margin-top:22px}
+  table.rt{min-width:0;font-size:9.5pt}
+  .lk{break-inside:avoid}
+  a{color:#111;text-decoration:none}
+  .print-only{display:block!important}
+}
+.print-only{display:none}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ============ MASTHEAD ============ -->
+  <header class="masthead">
+    <a class="logo" href="#" aria-label="ThriveXLabs home">
+      <!-- ============================================================
+           PLACEHOLDER MARK. No TXL logo SVG was supplied, so this is a
+           stand-in built from the brand palette: brass growth stroke,
+           sage counter-stroke, rust dot for the leak.
+           TO SWAP: paste your real <svg> here (keep width/height 34).
+           ============================================================ -->
+      <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="ThriveXLabs mark">
+        <rect x="0.75" y="0.75" width="32.5" height="32.5" rx="5" fill="#1E1C15" stroke="#C9A227" stroke-width="1.5"/>
+        <path d="M9 24.5 L18.5 9.5" stroke="#C9A227" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <path d="M14.5 15 L25 24.5" stroke="#7E9767" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M18.5 9.5 L24.5 9.5 L24.5 15" stroke="#E8CB68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="9" cy="24.5" r="2.6" fill="#B5482B"/>
+      </svg>
+      <span class="wm">Thrive<em>X</em>Labs</span>
+    </a>
+    <div class="mast-tag">Revenue Infrastructure Diagnostics</div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="eyebrow"><span class="pip"></span> Founder Dependency &amp; Revenue Leak Audit</div>
+    <h1>Your business is leaking revenue in places your P&amp;L will <em>never</em> show you.</h1>
+    <p class="lede">This is a diagnostic, not a quiz. It prices two things at once: the cost of <b>every hour that still runs through you</b>, and the revenue your pipeline, pricing and retention systems are <b>losing before it ever reaches your bank account</b>. Six steps, real numbers, and the 17 named leaks that stop service businesses between $10k and $100k a month from reaching their next milestone.</p>
+    <div class="hero-meta">
+      <span class="chip"><b>6</b> steps</span>
+      <span class="chip"><b>~7</b> min</span>
+      <span class="chip"><b>17</b> leaks tested</span>
+      <span class="chip"><b>6</b> functions scored</span>
+      <span class="chip">Runs <b>in your browser</b></span>
+    </div>
+  </section>
+
+  <!-- ============ APP ============ -->
+  <div class="app">
+    <nav class="rail" aria-label="Audit progress">
+      <div class="rail-head">Progress</div>
+      <ol class="steps" id="steps"></ol>
+      <div class="ticker" aria-live="polite">
+        <div class="tk-h">Exposure so far</div>
+        <div class="tk-b">
+          <div class="tk-n num" id="tkNum">$0</div>
+          <div class="tk-s" id="tkSub">Enter your baseline to begin</div>
+          <div class="tk-bar"><i id="tkBar"></i></div>
+          <div class="tk-p" id="tkPct">0% complete</div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="panel" id="panel"></main>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="end">
+    <div class="fl">
+      <b>ThriveXLabs</b> — Revenue infrastructure diagnostics and buildout for consultants, agencies and service businesses.<br>
+      Benchmarks are medians for B2B service businesses at $10k to $100k per month. Every figure is an estimate built to size a problem, not an audited account.<br>
+      Nothing you type is transmitted until you choose to unlock your report.
+    </div>
+    <div class="fr">
+      <a href="mailto:hi@thrivexlabs.com">hi@thrivexlabs.com</a><br>
+      <span id="footYear">2026</span> ThriveXLabs
+      <button class="restart" id="restartBtn" type="button">Start over</button>
+    </div>
+  </footer>
+</div>
+
+<div class="mbar" aria-live="polite">
+  <div>
+    <div class="ml">Exposure so far</div>
+    <div class="mn num" id="mbNum">$0</div>
+  </div>
+  <div class="mp" id="mbPct">0%</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ==================================================================
+   CONFIG — the only block you need to edit before going live.
+   ================================================================== */
+var CONFIG = {
+  brand: 'ThriveXLabs',
+  contactEmail: 'hi@thrivexlabs.com',
+
+  // TODO: your $299 paid diagnostic event type.
+  // NOTE: the Calendly account connected to this workspace is VirtUp
+  // (calendly.com/itisvirtup), not ThriveXLabs, so nothing was auto-filled.
+  calendlyUrl: 'https://calendly.com/thrivexlabs/revenue-infrastructure-diagnostic',
+
+  diagnosticPrice: 299,
+
+  // TODO: lead destination. Leave '' and the form falls back to a mailto
+  // draft addressed to contactEmail (works with zero setup, but you only
+  // get the leads who actually hit send in their mail client).
+  // Set this to a real endpoint that accepts a POST and you capture 100%:
+  //   - Customer.io Track API form/event endpoint (you already run workspace 222769)
+  //   - a Zapier / Make catch hook
+  //   - Formspree, Netlify Forms, or your own /api/lead route
+  leadEndpoint: '',
+  leadEndpointMode: 'json'   // 'json' = application/json body, 'form' = FormData
+};
+
+/* ==================================================================
+   BENCHMARKS
+   Pipeline medians carried over from the ThriveXLabs revenue leak
+   calculator. Delegable fractions and the overlap haircut are
+   documented in the Method section of the report.
+   ================================================================== */
+var BENCH = { book:32, show:78, close:27, ref:35 };
+
+var OVERLAP_HAIRCUT = 0.15;   // applied to gross exposure, see Method
+
+/* Six functions of the business. `deleg` is the share of founder hours in
+   that function that a well-built business genuinely hands off. Strategy
+   is deliberately low: a founder should keep it. */
+var FUNCS = [
+  { key:'marketing', name:'Marketing',  scope:'Lead generation',            deleg:0.70,
+    q:'Does lead generation run on a system or schedule, without you personally pushing it each week?' },
+  { key:'sales',     name:'Sales',      scope:'Revenue generation',          deleg:0.45,
+    q:'Does every lead get followed up within 24 to 48 hours, every time, without you remembering to?' },
+  { key:'delivery',  name:'Delivery',   scope:'Value and client happiness',  deleg:0.80,
+    q:'Does delivery follow a documented process, without you hand-holding each client?' },
+  { key:'finance',   name:'Finance',    scope:'Accuracy and collections',    deleg:0.90,
+    q:'Are your books current and your invoices collected without you chasing them?' },
+  { key:'team',      name:'Team',       scope:'Hiring and development',      deleg:0.60,
+    q:'Do you have a hiring and onboarding system, rather than improvising each time?' },
+  { key:'strategy',  name:'Strategy',   scope:'Clarity and growth',          deleg:0.15,
+    q:'Do goal-setting and review happen on a cadence, independent of your daily presence?' }
+];
+
+/* ==================================================================
+   THE 17 LEAKS
+   Classes control how a leak enters the maths, and exist to stop the
+   same lost dollar being counted twice:
+     priced  — carries its own dollar line
+     routed  — no dollar of its own; it explains a pipeline stage or a
+               dependency figure that is already priced elsewhere
+     risk    — no dollar; it raises the risk score
+   ================================================================== */
+var SECTIONS = [
+  { rn:'I',   name:'Pricing & Positioning',    ids:[1,2,3,4] },
+  { rn:'II',  name:'Client Acquisition',        ids:[5,6,7,8] },
+  { rn:'III', name:'Sales & Conversion',        ids:[9,10,11] },
+  { rn:'IV',  name:'Delivery & Operations',     ids:[12,13,14] },
+  { rn:'V',   name:'Retention & Expansion',     ids:[15,16,17] }
+];
+
+var LEAKS = [
+  { id:1, name:'Undifferentiated positioning', cls:'priced',
+    ask:'Can a prospect state who you are for and what number you move, in one sentence, after ten seconds on your site?',
+    what:'If a prospect can swap you for another consultant without noticing, you are competing on price by default. This is the leak upstream of every other leak on the list: it forces you to discount to win, which forces you to overload the calendar to hit revenue, which breaks delivery, which kills referrals.',
+    fix:'Name one specific outcome, for one specific buyer, in language that removes you from the general "consultant" category. "I help X do Y in Z" beats "full-service growth partner" every time. Put it in your headline, your first call slide, and your proposal cover.',
+    rate:{ missing:0.15, adhoc:0.07 },
+    basis:'Share of annual revenue given away as discount before any work is done. The playbook range is a 15 to 20 percent average discount across recent deals.' },
+
+  { id:2, name:'Scope-creep absorption', cls:'priced',
+    ask:'Does every "quick add" get repriced through a change order, every time, without exception?',
+    what:'Every add-on you say yes to without repricing is unpaid labour. It feels like relationship building in the moment. Across a year it is a second business you delivered for free.',
+    fix:'Every proposal gets an explicit "what is not included" section, and every request gets the same one-line reply: happy to add this, here is the additional scope and cost. No exceptions, including for your favourite client.',
+    rate:{ missing:0.10, adhoc:0.05 },
+    basis:'Unbilled scope as a share of revenue. The playbook range is 10 to 25 percent of project hours; the conservative end is used here.' },
+
+  { id:3, name:'No tiered offer ladder', cls:'priced',
+    ask:'Do you sell more than one thing, at more than one price point, with a low-risk entry offer?',
+    what:'One offer at one price to one buyer means your ceiling is your calendar, and every lead is either a yes or a total loss. There is no on-ramp for the prospect who is interested but not ready, and no upper tier for the client who wants more of you.',
+    fix:'Build three tiers: a paid diagnostic or audit that proves value fast at low buyer risk, your core engagement, and a retainer tier for your best clients. The diagnostic tier is the one that converts the "not yet" pile.',
+    custom:'ladder',
+    basis:'Entry-tier revenue recoverable from leads that currently convert to nothing. Modelled at an 8 percent capture of unconverted leads at 20 percent of your contract value.' },
+
+  { id:4, name:'Underpricing relative to outcome', cls:'priced',
+    ask:'Is your price anchored to the value of the outcome rather than the hours it takes you?',
+    what:'Pricing from your time caps your income at your hours and ignores what the client actually receives. An audit that finds $80,000 of leaks is worth more than eight hours of anyone’s time, but hourly pricing is exactly what you will charge for it.',
+    fix:'Price against the size of the problem. Anchor every proposal to a number the client already cares about, stated before your fee appears: revenue recovered, hours returned, deals closed.',
+    rate:{ missing:0.12, adhoc:0.06 },
+    basis:'Conservative uplift withheld by time-based pricing, as a share of annual revenue. The playbook cites 2 to 5 times for value-based pricing on identical work; that multiple is far too aggressive to assert here, so a 12 percent floor is used.' },
+
+  { id:5, name:'Referral-only dependency', cls:'routed', route:'Lead volume',
+    ask:'Do you run at least one acquisition channel you fully control, alongside referrals?',
+    what:'Referrals are your best lead source and the worst one to depend on exclusively, because you control neither volume nor timing. A referral-only pipeline makes revenue a lagging indicator of how good your last three projects happened to be.',
+    fix:'Keep referrals, and add one channel you own outright: outbound, content, or paid. Run it in the strong months too. That is the whole discipline.' },
+
+  { id:6, name:'No follow-up system for warm leads', cls:'priced',
+    ask:'Does every lead who goes quiet enter an automatic 5 to 7 touch follow-up sequence?',
+    what:'A lead who took a call and went quiet is not a lost lead, it is a lead with no follow-up system. Decisions on $5k to $20k engagements take multiple touches across weeks, not one conversation.',
+    fix:'Build a 5 to 7 touch sequence mixing email, LinkedIn and one genuinely useful asset, and let it run automatically for every lead who does not convert on first contact.',
+    custom:'followup',
+    basis:'Recovery on calls held that never closed. The playbook notes 60 to 80 percent of eventual buyers say no or nothing first; this prices a conservative 10 percent recovery of that pool.' },
+
+  { id:7, name:'Weak or absent proof assets', cls:'routed', route:'Close rate',
+    ask:'Do you have case studies with specific numbers, not just generic testimonials?',
+    what:'"Trust me" does not close $10k deals. Without numbers-based proof, every prospect has to take your word for it, and most will not.',
+    fix:'After every engagement capture one specific number and one client quote tied to it. Build it into offboarding so it never gets skipped. The playbook puts the gap between generic and numbers-based proof at roughly 20 versus 40 percent close rates.' },
+
+  { id:8, name:'Inconsistent outbound cadence', cls:'routed', route:'Lead volume',
+    ask:'Is your weekly outbound quota protected on the calendar, even in your busiest delivery weeks?',
+    what:'Outbound that runs hard for two weeks and then stops for six because delivery got busy never compounds. This is the single most common cause of boom-bust revenue in small service businesses: busy and broke, or free and starving.',
+    fix:'Set a fixed weekly number of new conversations started and protect it like a client call, regardless of how full the plate is.' },
+
+  { id:9, name:'No discovery call framework', cls:'routed', route:'Close rate',
+    ask:'Do you run the same structured discovery framework on every single call?',
+    what:'Winging discovery means equal time on great-fit and terrible-fit prospects, and not collecting what you need to price the work. It also means pitching before you understand the problem.',
+    fix:'Use one repeatable sequence every call: current state, desired state, what has been tried, budget and timeline reality, decision process. Unstructured calls convert to proposals at roughly half the rate.' },
+
+  { id:10, name:'Proposal as guesswork', cls:'routed', route:'Close rate',
+    ask:'Do you send from a template with pre-anchored packages, rather than building each proposal fresh?',
+    what:'A proposal built from scratch with pricing decided by how the call felt is slow to produce and inconsistent to sell. You end up negotiating against yourself before the client sees a number.',
+    fix:'Build one template with two or three pre-set packages and anchored pricing, structured so the middle option is the obvious choice. Ad hoc proposals take 2 to 4 times longer to produce and close less reliably.' },
+
+  { id:11, name:'No urgency or decision mechanism', cls:'routed', route:'Close rate',
+    ask:'Does every proposal carry a real reason to decide by a specific date, plus a follow-up call already booked?',
+    what:'Deals that go to "let me think about it" with no next step and no deadline die in an inbox. Not lost to a competitor, lost to inertia.',
+    fix:'Give every proposal a genuine deadline (limited onboarding capacity, a pricing change, a cohort start) and book the follow-up call before you send it, not after.' },
+
+  { id:12, name:'Founder as bottleneck in delivery', cls:'routed', route:'Delivery dependency',
+    ask:'Can work ship to a client without passing through you personally?',
+    what:'If every deliverable passes through you, your revenue ceiling is your personal capacity. Full stop. This is the leak that keeps strong pipelines capped.',
+    fix:'Document the process as a checklist the moment you have done it the same way three times, then hand off the first piece, even partially. The dollar cost of this one already appears in your Delivery dependency line.' },
+
+  { id:13, name:'No onboarding system', cls:'risk',
+    ask:'Does every new client get the same fixed onboarding sequence the moment they sign?',
+    what:'The first two weeks set the tone for the engagement and for the referral relationship after it. Improvised onboarding creates doubt exactly when trust is most fragile, and month-one problems are disproportionately likely to end the relationship before it produces a case study.',
+    fix:'Fix the sequence: kickoff agenda, timeline, communication expectations, first deliverable date. Send it on signature, identically, every time.' },
+
+  { id:14, name:'Manual, non-repeatable delivery', cls:'routed', route:'Delivery dependency',
+    ask:'Is the repeatable 70 percent of every engagement built into templates or tooling?',
+    what:'Delivering every engagement as a bespoke build resets your time investment to zero with each new client. You never get faster and margin never improves as you grow.',
+    fix:'Identify the portion that is identical across clients and productise it; reserve custom time for the genuinely client-specific remainder. Productised delivery typically drops time per client by 20 to 40 percent.' },
+
+  { id:15, name:'No post-project upsell path', cls:'priced',
+    ask:'Is there a defined next offer presented before the current engagement ends?',
+    what:'Delivering great work and then saying "let me know if you need anything else" is not a retention strategy. Most clients move on, not because they are unhappy but because nobody gave them a reason to stay.',
+    fix:'Design the next step now (retainer, phase two, quarterly package) and present it while the value is still fresh, before the engagement closes. Acquiring a new client costs 5 to 7 times more than expanding an existing one.',
+    custom:'upsell',
+    basis:'Expansion revenue foregone, modelled as 25 percent of this year’s won clients taking a next engagement at half your contract value.' },
+
+  { id:16, name:'No client success check-ins', cls:'risk',
+    ask:'Is a scheduled check-in built into every engagement, at 30 and 90 days?',
+    what:'Clients who go quiet after delivery are not necessarily satisfied. Silence gets misread as success until the client does not renew, does not refer, and you never find out why. Silent churn is invisible in a pipeline report.',
+    fix:'A two-question email at day 30 and day 90, scheduled in advance, in every engagement. Problems surface while they are still fixable, and wins surface while they are still referable.' },
+
+  { id:17, name:'No referral or testimonial capture at close', cls:'routed', route:'Referral rate',
+    ask:'Do you ask for the testimonial and the referral in the same conversation where you deliver the win?',
+    what:'The highest-trust moment in the whole relationship is the moment you deliver a result, and it is the moment most service businesses do nothing with. Asking weeks later means asking at the point of lowest recall and lowest energy.',
+    fix:'Put the ask in the offboarding checklist: testimonial and referral introduction requested inside 48 hours of the delivered win, before the high fades.' }
+];
+
+var LEAK_BY_ID = {};
+LEAKS.forEach(function(l){ LEAK_BY_ID[l.id] = l; });
+
+var LEVELS = ['Systemized','Ad hoc','Missing'];
+var LEVEL_KEY = { 'Systemized':'systemized', 'Ad hoc':'adhoc', 'Missing':'missing' };
+var LEVEL_WEIGHT = { 'Systemized':1, 'Ad hoc':0.5, 'Missing':0 };
+
+/* ==================================================================
+   STATE
+   ================================================================== */
+var STORE = 'txl-ria-v1';
+
+function blankState(){
+  var st = {
+    step: 0,
+    biz: { monthlyRevenue:null, weeklyHours:null, acv:null, activeClients:null, leadsPerMonth:null },
+    pipe: { book:null, show:null, close:null, ref:null },
+    assume: { replacementRate:35 },
+    fn: {},
+    leaks: {},
+    unlocked: false,
+    lead: null
+  };
+  FUNCS.forEach(function(f){ st.fn[f.key] = { hours:null, consistency:'' }; });
+  LEAKS.forEach(function(l){ st.leaks[l.id] = ''; });
+  return st;
+}
+var state = blankState();
+
+function save(){
+  try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(e){}
+}
+function load(){
+  try {
+    var raw = localStorage.getItem(STORE);
+    if(!raw) return;
+    var s = JSON.parse(raw);
+    if(!s || typeof s !== 'object') return;
+    ['biz','pipe','assume'].forEach(function(g){
+      if(s[g]) Object.keys(state[g]).forEach(function(k){ if(k in s[g]) state[g][k] = s[g][k]; });
+    });
+    if(s.fn) FUNCS.forEach(function(f){ if(s.fn[f.key]) state.fn[f.key] = s.fn[f.key]; });
+    if(s.leaks) LEAKS.forEach(function(l){ if(l.id in s.leaks) state.leaks[l.id] = s.leaks[l.id]; });
+    state.unlocked = !!s.unlocked;
+    state.lead = s.lead || null;
+    if(typeof s.step === 'number') state.step = Math.min(STEPS.length-1, Math.max(0, s.step));
+  } catch(e){}
+}
+
+/* ==================================================================
+   HELPERS
+   ================================================================== */
+function n(v){ var x = parseFloat(v); return (isFinite(x) && x > 0) ? x : 0; }
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function money(v){
+  v = Math.round(n(v));
+  if(v >= 1000000) return '$' + (v/1000000).toFixed(v >= 10000000 ? 1 : 2).replace(/\.?0+$/,'') + 'M';
+  return '$' + v.toLocaleString('en-US');
+}
+function moneyFull(v){ return '$' + Math.round(n(v)).toLocaleString('en-US'); }
+function dec(v,d){ return (Math.round(n(v) * Math.pow(10,d)) / Math.pow(10,d)).toFixed(d); }
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+  });
+}
+function el(id){ return document.getElementById(id); }
+
+/* ==================================================================
+   THE MODEL
+   ================================================================== */
+function computeModel(){
+  var b = state.biz, p = state.pipe;
+  var m = {};
+
+  m.annualRev   = n(b.monthlyRevenue) * 12;
+  m.weeklyHours = n(b.weeklyHours);
+  m.acv         = n(b.acv);
+  m.leads       = n(b.leadsPerMonth);
+
+  /* --- founder hourly value ------------------------------------- */
+  m.hourly = (m.weeklyHours > 0 && m.annualRev > 0) ? m.annualRev / (m.weeklyHours * 52) : 0;
+
+  /* --- 1. founder dependency ------------------------------------
+     Two deliberate haircuts, because the naive version of this figure
+     is indefensible:
+       1. Only the delegable share of hours in each function counts.
+          A founder is supposed to be in sales and strategy.
+       2. Only the SPREAD between your hourly value and what you would
+          pay someone to take the work counts. A reclaimed hour does not
+          arrive free; you buy it. Charging the full hourly rate implies
+          delegating your week roughly doubles revenue, which is how
+          these calculators end up quoting more exposure than the
+          business has revenue.                                      */
+  m.replRate = n(state.assume.replacementRate);
+  m.spread   = Math.max(0, m.hourly - m.replRate);
+  m.fnRows = FUNCS.map(function(f){
+    var raw = n(state.fn[f.key].hours);
+    var delegHours = raw * f.deleg;
+    var cost = delegHours * m.spread * 52;
+    var cons = state.fn[f.key].consistency || '';
+    var depLvl = raw >= 8 ? 'High' : (raw >= 3 ? 'Partial' : (raw > 0 ? 'Light' : 'None'));
+    var trap = raw >= 5 && cons !== 'Systemized' && cons !== '';
+    return { f:f, rawHours:raw, delegHours:delegHours, cost:cost, cons:cons, depLvl:depLvl, trap:trap };
+  });
+  m.depTotal    = m.fnRows.reduce(function(a,r){ return a + r.cost; }, 0);
+  m.rawHoursSum = m.fnRows.reduce(function(a,r){ return a + r.rawHours; }, 0);
+  m.delegSum    = m.fnRows.reduce(function(a,r){ return a + r.delegHours; }, 0);
+  m.trapCount   = m.fnRows.filter(function(r){ return r.trap; }).length;
+  m.hoursAccounted = m.weeklyHours > 0 ? clamp(m.rawHoursSum / m.weeklyHours, 0, 2) : 0;
+
+  /* --- 2. pipeline ----------------------------------------------
+     Conversion chain, then an all-benchmark ceiling. Stages already
+     at or above benchmark are held, never pulled back down.        */
+  var cur = { book:n(p.book), show:n(p.show), close:n(p.close), ref:n(p.ref) };
+  m.cur = cur;
+  var chain = function(v){
+    return m.leads * (v.book/100) * (v.show/100) * (v.close/100);
+  };
+  m.wonPerMo    = chain(cur) * (1 + cur.ref/100);
+  m.wonPerYear  = m.wonPerMo * 12;
+
+  var best = {
+    book:  Math.max(cur.book,  BENCH.book),
+    show:  Math.max(cur.show,  BENCH.show),
+    close: Math.max(cur.close, BENCH.close),
+    ref:   Math.max(cur.ref,   BENCH.ref)
+  };
+  m.best = best;
+  m.wonCeilMo = chain(best) * (1 + best.ref/100);
+  m.pipeRevNow  = m.wonPerMo   * m.acv * 12;
+  m.pipeRevCeil = m.wonCeilMo  * m.acv * 12;
+  m.pipeTotal   = Math.max(0, m.pipeRevCeil - m.pipeRevNow);
+
+  /* Coherence check. Your pipeline inputs imply an annual revenue of their
+     own. If that lands nowhere near the revenue you typed in step 1, one
+     of the inputs is wrong, and every figure downstream inherits the error.
+     Surfacing this is a genuine finding: most people who trip it discover
+     they do not actually know their lead volume or their true ACV. */
+  m.impliedRev = m.pipeRevNow;
+  m.cohRatio = (m.annualRev > 0 && m.impliedRev > 0) ? m.impliedRev / m.annualRev : 0;
+  m.coherent = !(m.cohRatio > 0 && (m.cohRatio < 0.5 || m.cohRatio > 2));
+
+  /* Per-stage isolated attribution: what this one stage alone costs.
+     These sum to more than pipeTotal by design; they are shown as
+     attribution, never added to the ledger.                        */
+  var STAGE_DEFS = [
+    { k:'book',  nm:'Lead to call booked', sub:'of leads book a call' },
+    { k:'show',  nm:'Booked to call held', sub:'show rate' },
+    { k:'close', nm:'Held to client',      sub:'close rate' },
+    { k:'ref',   nm:'Repeat and referral', sub:'extra clients per client' }
+  ];
+  m.stages = STAGE_DEFS.map(function(sd){
+    var c = cur[sd.k], bm = BENCH[sd.k];
+    var mult = 1;
+    if(sd.k === 'ref'){ mult = (1 + bm/100) / (1 + Math.max(c,0)/100); }
+    else { mult = c > 0 ? bm / c : (bm > 0 ? 1 : 1); }
+    if(!isFinite(mult) || mult < 1) mult = 1;
+    var gap = c > 0 ? Math.max(0, m.pipeRevNow * (mult - 1)) : 0;
+    var ratio = sd.k === 'ref' ? (1 + c/100) / (1 + bm/100) : (bm > 0 ? c / bm : 1);
+    return { k:sd.k, nm:sd.nm, sub:sd.sub, cur:c, bench:bm, gap:gap,
+             ratio:ratio, st: ratio >= 0.98 ? 'at' : (ratio >= 0.78 ? 'near' : 'below') };
+  });
+  m.counts = {
+    booked: m.leads * (cur.book/100),
+    held:   m.leads * (cur.book/100) * (cur.show/100),
+    won:    chain(cur)
+  };
+
+  /* --- 3. the 17 leaks ------------------------------------------ */
+  m.leakRows = LEAKS.map(function(l){
+    var lvl = state.leaks[l.id] || '';
+    var key = LEVEL_KEY[lvl] || '';
+    var cost = 0;
+
+    if(l.cls === 'priced' && (key === 'missing' || key === 'adhoc')){
+      if(l.rate){
+        cost = m.annualRev * l.rate[key];
+      } else if(l.custom === 'ladder'){
+        var unconverted = Math.max(0, (m.leads * 12) - m.wonPerYear);
+        cost = unconverted * 0.08 * (0.20 * m.acv) * (key === 'missing' ? 1 : 0.5);
+      } else if(l.custom === 'followup'){
+        var lostCalls = Math.max(0, (m.counts.held * 12) - m.wonPerYear);
+        cost = lostCalls * 0.10 * m.acv * (key === 'missing' ? 1 : 0.5);
+      } else if(l.custom === 'upsell'){
+        cost = m.wonPerYear * 0.25 * (m.acv * 0.5) * (key === 'missing' ? 1 : 0.5);
+      }
+    }
+    return { l:l, lvl:lvl, key:key, cost:cost };
+  });
+
+  m.pricedTotal = m.leakRows.reduce(function(a,r){ return a + r.cost; }, 0);
+  m.answered    = m.leakRows.filter(function(r){ return r.lvl !== ''; });
+  m.unanswered  = 17 - m.answered.length;
+  m.active      = m.answered.filter(function(r){ return r.lvl !== 'Systemized'; });
+  m.missing     = m.answered.filter(function(r){ return r.lvl === 'Missing'; });
+
+  /* --- 4. exposure ledger --------------------------------------
+     Gross, then a documented haircut, because a business with a
+     positioning problem and a close-rate problem is usually looking
+     at one root cause wearing two costumes.                        */
+  m.gross = m.depTotal + m.pipeTotal + m.pricedTotal;
+  m.haircut = m.gross * OVERLAP_HAIRCUT;
+  m.net = Math.max(0, m.gross - m.haircut);
+
+  /* A sanity cap: exposure above a multiple of revenue reads as a
+     broken model rather than a finding. Flagged, never silently applied. */
+  m.overRevenue = m.annualRev > 0 ? m.net / m.annualRev : 0;
+
+  /* --- 5. scores ------------------------------------------------ */
+  var funnelScore = m.wonCeilMo > 0 ? clamp(m.wonPerMo / m.wonCeilMo, 0, 1) : 0;
+  var indepScore  = m.weeklyHours > 0 ? clamp(1 - (m.delegSum / m.weeklyHours), 0, 1) : 0;
+  var sysScore = 0;
+  if(m.answered.length > 0){
+    sysScore = m.answered.reduce(function(a,r){ return a + LEVEL_WEIGHT[r.lvl]; }, 0) / m.answered.length;
+  }
+  var retIds = [15,16,17];
+  var retAnswered = retIds.map(function(i){ return state.leaks[i]; }).filter(function(v){ return v !== ''; });
+  var retLeakScore = retAnswered.length
+    ? retAnswered.reduce(function(a,v){ return a + LEVEL_WEIGHT[v]; }, 0) / retAnswered.length : 0.5;
+  var refScore = clamp(cur.ref / BENCH.ref, 0, 1);
+  var retScore = (retLeakScore * 0.5) + (refScore * 0.5);
+
+  m.parts = { funnel:funnelScore, indep:indepScore, sys:sysScore, ret:retScore };
+  m.score = Math.round((funnelScore*0.30 + indepScore*0.30 + sysScore*0.25 + retScore*0.15) * 100);
+
+  if(m.score >= 80)      m.band = { t:'Infrastructure-led',     s:'The business runs. You choose to be in it.' };
+  else if(m.score >= 65) m.band = { t:'Systemizing',            s:'Real systems exist. The handoffs are unfinished.' };
+  else if(m.score >= 45) m.band = { t:'Operator-dependent',     s:'It works because you work. That is the ceiling.' };
+  else                   m.band = { t:'Founder is the product', s:'Revenue is a function of your calendar, not your market.' };
+
+  /* --- 6. priority ranking --------------------------------------
+     Ranked by annual dollars, with a payback-speed tiebreak so the
+     fast, cheap fixes surface above the structural ones.           */
+  var items = [];
+  m.fnRows.forEach(function(r){
+    if(r.cost > 0) items.push({
+      kind:'dependency', nm:r.f.name + ' dependency', amt:r.cost, speed: r.f.key === 'finance' ? 1 : 2,
+      detail: dec(r.delegHours,1) + ' of your ' + dec(r.rawHours,0) + ' weekly hours in ' +
+              r.f.name.toLowerCase() + ' are delegable, at a ' + moneyFull(m.spread) + '/hr spread.',
+      cons: r.cons, depLvl: r.depLvl
+    });
+  });
+  m.stages.forEach(function(s){
+    if(s.gap > 0) items.push({
+      kind:'pipeline', nm:s.nm, amt:s.gap, speed: s.k === 'show' ? 1 : 2,
+      detail:'You are at ' + dec(s.cur,1) + '% against a ' + s.bench + '% benchmark.'
+    });
+  });
+  m.leakRows.forEach(function(r){
+    if(r.cost > 0) items.push({
+      kind:'leak', nm:'Leak ' + r.l.id + ': ' + r.l.name, amt:r.cost,
+      speed: (r.l.id === 2 || r.l.id === 6) ? 1 : (r.l.id === 1 ? 3 : 2),
+      detail: r.l.fix
+    });
+  });
+  items.sort(function(a,b){
+    var sa = a.amt / a.speed, sb = b.amt / b.speed;
+    return sb - sa;
+  });
+  m.priorities = items;
+
+  /* Which section carries the most exposure — the free teaser. */
+  var secTotals = SECTIONS.map(function(sec){
+    var t = sec.ids.reduce(function(a,id){
+      var row = m.leakRows.filter(function(r){ return r.l.id === id; })[0];
+      return a + (row ? row.cost : 0);
+    }, 0);
+    var activeN = sec.ids.filter(function(id){
+      var v = state.leaks[id];
+      return v !== '' && v !== 'Systemized';
+    }).length;
+    return { sec:sec, total:t, activeN:activeN };
+  });
+  secTotals.sort(function(a,b){
+    if(b.total !== a.total) return b.total - a.total;
+    return b.activeN - a.activeN;
+  });
+  m.topSection = secTotals[0];
+  m.secTotals = secTotals;
+
+  return m;
+}
+
+/* ==================================================================
+   COMPLETION — drives the ticker and the progress bar
+   ================================================================== */
+function completion(){
+  var total = 5 + 4 + 12 + 17, got = 0;
+  ['monthlyRevenue','weeklyHours','acv','activeClients','leadsPerMonth'].forEach(function(k){
+    if(n(state.biz[k]) > 0) got++;
+  });
+  ['book','show','close','ref'].forEach(function(k){ if(state.pipe[k] !== null && state.pipe[k] !== '') got++; });
+  FUNCS.forEach(function(f){
+    if(state.fn[f.key].hours !== null && state.fn[f.key].hours !== '') got++;
+    if(state.fn[f.key].consistency) got++;
+  });
+  LEAKS.forEach(function(l){ if(state.leaks[l.id]) got++; });
+  return clamp(got / total, 0, 1);
+}
+
+/* ==================================================================
+   STEPS
+   ================================================================== */
+var STEPS = [
+  { key:'baseline', label:'Baseline',       render:stepBaseline },
+  { key:'pipeline', label:'Pipeline',       render:stepPipeline },
+  { key:'founder',  label:'Founder time',   render:stepFounder  },
+  { key:'sysA',     label:'Systems I & II', render:stepSysA     },
+  { key:'sysB',     label:'Systems III-V',  render:stepSysB     },
+  { key:'report',   label:'Your report',    render:stepReport   }
+];
+
+function renderRail(){
+  el('steps').innerHTML = STEPS.map(function(s, i){
+    var cls = i === state.step ? 'active' : (i < state.step ? 'done' : '');
+    return '<li class="' + cls + '"><span class="dot"></span>' + esc(s.label) + '</li>';
+  }).join('');
+}
+
+function renderTicker(m){
+  var c = completion();
+  var pctTxt = Math.round(c * 100) + '% complete';
+  var amount = m.net > 0 ? money(m.net) : '$0';
+  el('tkNum').textContent = amount;
+  el('mbNum').textContent = amount;
+  el('tkBar').style.width = (c * 100).toFixed(1) + '%';
+  el('tkPct').textContent = pctTxt;
+  el('mbPct').textContent = Math.round(c * 100) + '%';
+  el('tkSub').textContent = m.net > 0
+    ? 'Annual, conservative. Keeps moving as you answer.'
+    : 'Enter your baseline to begin';
+}
+
+/* ---------- reusable field builders ---------- */
+function fNum(id, val, ph, prefix, suffix){
+  var v = (val === null || val === undefined || val === '') ? '' : val;
+  return '<div class="inp">' +
+    (prefix ? '<span class="aff">' + prefix + '</span>' : '') +
+    '<input type="number" inputmode="decimal" min="0" step="any" id="' + id + '" value="' + esc(v) + '" placeholder="' + esc(ph || '') + '">' +
+    (suffix ? '<span class="aff suf">' + suffix + '</span>' : '') +
+  '</div>';
+}
+function fWrap(labelHtml, inner, hint){
+  return '<div class="field"><span class="flabel">' + labelHtml + '</span>' + inner +
+    (hint ? '<span class="hint">' + hint + '</span>' : '') + '</div>';
+}
+function fSeg(fieldId, opts, current, tri){
+  return '<div class="seg' + (tri ? ' tri' : '') + '" data-field="' + esc(fieldId) + '">' +
+    opts.map(function(o){
+      return '<button type="button" data-val="' + esc(o) + '" class="' + (current === o ? 'sel' : '') + '">' + esc(o) + '</button>';
+    }).join('') + '</div>';
+}
+function navRow(back, nextLabel){
+  return '<div class="nav">' +
+    (back ? '<button class="btn" id="backBtn" type="button">&larr; Back</button>' : '<span></span>') +
+    '<span class="spacer"></span>' +
+    '<button class="btn primary" id="nextBtn" type="button">' + esc(nextLabel) + ' &rarr;</button>' +
+  '</div>';
+}
+
+/* ---------- step 1: baseline ---------- */
+function stepBaseline(m){
+  var b = state.biz;
+  return '' +
+  '<div class="step-kick">Step 1 of 5</div>' +
+  '<h2 class="step-title">Your baseline</h2>' +
+  '<p class="step-sub">Five numbers. Everything after this is priced against them, including what an hour of your time is actually worth. <b>Estimate if you have to, but go and get the real number if you can</b> — a guessed show rate produces a guess with better formatting.</p>' +
+  '<div class="grid2">' +
+    fWrap('Current monthly revenue', fNum('monthlyRevenue', b.monthlyRevenue, '25000', 'USD $'),
+      'Average across the last three months, not your best month.') +
+    fWrap('Your working hours per week', fNum('weeklyHours', b.weeklyHours, '55', null, 'hrs'),
+      'All hours you put into the business. Be honest, including evenings.') +
+    fWrap('Average contract value', fNum('acv', b.acv, '6500', 'USD $'),
+      'Total value of one client. For retainers use monthly fee multiplied by average months retained.') +
+    fWrap('Active paying clients', fNum('activeClients', b.activeClients, '8', null, 'clients'),
+      'On the books right now.') +
+    fWrap('Qualified leads per month', fNum('leadsPerMonth', b.leadsPerMonth, '20', null, 'leads'),
+      'People who are a genuine fit and have shown intent. Not raw traffic or impressions.') +
+  '</div>' +
+  navRow(false, 'Pipeline');
+}
+
+/* ---------- step 2: pipeline ---------- */
+function stepPipeline(m){
+  var p = state.pipe;
+  return '' +
+  '<div class="step-kick">Step 2 of 5</div>' +
+  '<h2 class="step-title">Your pipeline</h2>' +
+  '<p class="step-sub">Four conversion rates, benchmarked against medians for B2B service businesses at your revenue. <b>Any stage you are already above benchmark on is held where it is</b>, never pulled down to the median.</p>' +
+  '<div class="grid2">' +
+    fWrap('Lead to call booked <span class="bm">bench ' + BENCH.book + '%</span>',
+      fNum('book', p.book, '22', null, '%'),
+      'Of qualified leads, the share that end up on your calendar.') +
+    fWrap('Booked to call held <span class="bm">bench ' + BENCH.show + '%</span>',
+      fNum('show', p.show, '65', null, '%'),
+      'Your show rate. The cheapest number on this page to fix.') +
+    fWrap('Held to client <span class="bm">bench ' + BENCH.close + '%</span>',
+      fNum('close', p.close, '22', null, '%'),
+      'Of calls actually held, the share that become paying clients.') +
+    fWrap('Repeat and referral <span class="bm">bench ' + BENCH.ref + '%</span>',
+      fNum('ref', p.ref, '10', null, '%'),
+      'Extra clients you win per existing client, from repeat work and referrals.') +
+  '</div>' +
+  navRow(true, 'Founder time');
+}
+
+/* ---------- step 3: founder dependency ---------- */
+function stepFounder(m){
+  var rows = FUNCS.map(function(f){
+    var s = state.fn[f.key];
+    return '<div class="frow" data-fn="' + f.key + '">' +
+      '<div class="frow-h">' +
+        '<span class="fn">' + esc(f.name) + '</span>' +
+        '<span class="scope">' + esc(f.scope) + '</span>' +
+        '<span class="deleg">' + Math.round(f.deleg * 100) + '% delegable</span>' +
+      '</div>' +
+      '<div class="frow-b">' +
+        '<div><div class="q">Your hours per week</div>' +
+          fNum('fn_' + f.key + '_hours', s.hours, '8', null, 'hrs') + '</div>' +
+        '<div><div class="q">' + esc(f.q) + '</div>' +
+          fSeg('fn_' + f.key + '_consistency', ['Systemized','Ad hoc','Missing'], s.consistency, true) + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  return '' +
+  '<div class="step-kick">Step 3 of 5</div>' +
+  '<h2 class="step-title">Where your hours go</h2>' +
+  '<p class="step-sub">Split your week across the six functions of the business. Only the <b>delegable share</b> of each is charged against you, because a founder is supposed to be in sales and strategy. Delivery and finance are a different story.</p>' +
+  rows +
+  '<details class="adv"><summary>Method and assumptions: how your time is priced</summary>' +
+    '<p class="step-sub" style="margin:18px 0 22px">Your implied hourly value is annual revenue over annual hours: ' +
+    '<b>' + moneyFull(m.hourly) + ' an hour</b> at ' + moneyFull(n(state.biz.monthlyRevenue)) + ' a month across ' +
+    dec(n(state.biz.weeklyHours),0) + ' hours a week. But a reclaimed hour is not free, you buy it. So only the ' +
+    '<b>spread</b> between your hourly value and what you would pay someone to take that work is charged: currently ' +
+    '<b>' + moneyFull(m.spread) + ' an hour</b>. Multiply by delegable hours, then by 52. It is an opportunity cost, ' +
+    'not cash leaving the account, and that distinction matters when you read the total.</p>' +
+    '<div class="grid2">' +
+      fWrap('Blended hourly cost of the person you would hand work to',
+        fNum('replacementRate', state.assume.replacementRate, '35', 'USD $', '/hr'),
+        'Contractor, VA, or junior hire, loaded cost. Raise it and your dependency figure falls, as it should.') +
+    '</div>' +
+  '</details>' +
+  navRow(true, 'Systems audit');
+}
+
+/* ---------- steps 4 and 5: the 17 leaks ---------- */
+function leakSection(sec){
+  var rows = sec.ids.map(function(id){
+    var l = LEAK_BY_ID[id];
+    return '<div class="lrow">' +
+      '<div class="lt">' +
+        '<div class="nm"><span class="no">' + (id < 10 ? '0' : '') + id + '</span>' + esc(l.name) + '</div>' +
+        '<div class="ask">' + esc(l.ask) + '</div>' +
+      '</div>' +
+      fSeg('leak_' + id, LEVELS, state.leaks[id], true) +
+    '</div>';
+  }).join('');
+  var done = sec.ids.filter(function(id){ return state.leaks[id]; }).length;
+  return '<div class="lsec">' +
+    '<div class="lsec-h"><span class="rn">' + sec.rn + '</span><h3>' + esc(sec.name) + '</h3>' +
+      '<span class="cnt">' + done + ' / ' + sec.ids.length + ' answered</span></div>' +
+    rows +
+  '</div>';
+}
+
+function stepSysA(m){
+  return '' +
+  '<div class="step-kick">Step 4 of 5</div>' +
+  '<h2 class="step-title">Systems audit: pricing and acquisition</h2>' +
+  '<p class="step-sub">Eight of the seventeen leaks. Answer for <b>the business as it is today</b>, not the one you are planning to build. "Ad hoc" means it happens when you remember to. "Missing" means it is not really happening at all.</p>' +
+  leakSection(SECTIONS[0]) + leakSection(SECTIONS[1]) +
+  navRow(true, 'Continue');
+}
+
+function stepSysB(m){
+  return '' +
+  '<div class="step-kick">Step 5 of 5</div>' +
+  '<h2 class="step-title">Systems audit: sales, delivery, retention</h2>' +
+  '<p class="step-sub">The remaining nine. These are the leaks that decide whether the revenue you win <b>stays won</b>, and whether delivery scales past your own capacity.</p>' +
+  leakSection(SECTIONS[2]) + leakSection(SECTIONS[3]) + leakSection(SECTIONS[4]) +
+  navRow(true, 'See my report');
+}
+
+/* ==================================================================
+   THE SCORE GAUGE
+   Semicircular arc drawn to a single 0-100 scale, with the band
+   thresholds as real ticks so the reader can place their own number.
+   ================================================================== */
+function gaugeSVG(score){
+  var W = 244, H = 154, cx = 122, cy = 128, r = 92;
+  var pt = function(v){
+    var a = Math.PI * (1 - clamp(v,0,100)/100);
+    return { x: cx + r * Math.cos(a), y: cy - r * Math.sin(a) };
+  };
+  var arcPath = function(from, to){
+    var p1 = pt(from), p2 = pt(to);
+    var large = 0, sweep = 1;
+    return 'M ' + p1.x.toFixed(2) + ' ' + p1.y.toFixed(2) +
+           ' A ' + r + ' ' + r + ' 0 ' + large + ' ' + sweep + ' ' + p2.x.toFixed(2) + ' ' + p2.y.toFixed(2);
+  };
+  var color = score >= 80 ? '#A9C08D' : (score >= 65 ? '#E8CB68' : (score >= 45 ? '#C9862B' : '#DC8163'));
+  /* Tick marks cross the band; their labels sit clear of it on the outside,
+     so neither the arc nor the score figure is ever overprinted. */
+  var at = function(v, rad){
+    var a = Math.PI * (1 - v/100);
+    return { x: cx + rad * Math.cos(a), y: cy - rad * Math.sin(a) };
+  };
+  var ticks = [45, 65, 80].map(function(t){
+    var i = at(t, r - 9), o = at(t, r + 9), lb = at(t, r + 19);
+    return '<line x1="' + i.x.toFixed(2) + '" y1="' + i.y.toFixed(2) + '" x2="' + o.x.toFixed(2) + '" y2="' + o.y.toFixed(2) +
+           '" stroke="#6F6858" stroke-width="1.4"/>' +
+           '<text x="' + lb.x.toFixed(2) + '" y="' + (lb.y + 3).toFixed(2) + '" fill="#6F6858" font-family="IBM Plex Mono, monospace" ' +
+           'font-size="9" text-anchor="middle">' + t + '</text>';
+  }).join('');
+  /* No needle: the filled arc already states the value, and a needle
+     radiating from the pivot is the one element that cannot avoid
+     crossing the figure in the middle. The arc gets an emphasized
+     endpoint instead. */
+  var end = pt(score);
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Revenue infrastructure score ' + score + ' out of 100">' +
+    '<path d="' + arcPath(0,100) + '" fill="none" stroke="#2B261E" stroke-width="13" stroke-linecap="round"/>' +
+    (score > 0 ? '<path d="' + arcPath(0, score) + '" fill="none" stroke="' + color + '" stroke-width="13" stroke-linecap="round"/>' : '') +
+    ticks +
+    (score > 0 ? '<circle cx="' + end.x.toFixed(2) + '" cy="' + end.y.toFixed(2) +
+      '" r="5.5" fill="' + color + '" stroke="#15140F" stroke-width="2.5"/>' : '') +
+    '<text x="' + cx + '" y="' + (cy - 36) + '" fill="' + color + '" font-family="Fraunces, Georgia, serif" font-weight="600" ' +
+      'font-size="48" text-anchor="middle">' + score + '</text>' +
+    '<text x="' + cx + '" y="' + (cy - 18) + '" fill="#6F6858" font-family="IBM Plex Mono, monospace" font-size="8.5" ' +
+      'letter-spacing="1.6" text-anchor="middle">OUT OF 100</text>' +
+  '</svg>';
+}
+
+/* ==================================================================
+   THE REPORT
+   ================================================================== */
+function stepReport(m){
+  var locked = !state.unlocked;
+  var price = CONFIG.diagnosticPrice;
+  var priceShare = m.net > 0 ? (price / m.net * 100) : 0;
+  var priceShareTxt = priceShare > 0
+    ? (priceShare < 0.01 ? 'under 0.01%' : priceShare.toFixed(priceShare < 1 ? 2 : 1) + '%')
+    : null;
+
+  /* ----- free: headline read ----- */
+  var read;
+  if(m.net <= 0){
+    read = 'There is not enough in the model yet to price anything. Go back and fill in your baseline and pipeline numbers.';
+  } else if(m.trapCount >= 3){
+    read = m.trapCount + ' of 6 functions are running on you personally, without a system and without results. ' +
+      'That combination is why growth feels capped by your calendar rather than your market.';
+  } else if(m.depTotal > m.pipeTotal + m.pricedTotal){
+    read = 'Most of your exposure is not a marketing problem. It is the ' + dec(m.delegSum,0) +
+      ' hours a week of delegable work still sitting on your desk, priced at your own rate.';
+  } else {
+    read = 'Most of your exposure sits in the systems between a lead arriving and a client staying, not in your own hours. ' +
+      'That is the cheaper of the two problems to fix.';
+  }
+
+  /* A model that contradicts itself says so, above the fold, before it
+     quotes anyone a number. */
+  var cohWarn = (!m.coherent && m.annualRev > 0 && m.impliedRev > 0)
+    ? '<div class="method" style="margin:0 0 22px;border-color:var(--amber);background:var(--amber-dim)">' +
+        '<h4 style="color:#E0A54F">Check your inputs before you trust this number</h4>' +
+        '<ul><li>Your pipeline inputs imply <b>' + moneyFull(m.impliedRev) + ' a year</b> in new business, but you ' +
+        'entered <b>' + moneyFull(m.annualRev) + '</b> of actual revenue. Those should be in the same ballpark. ' +
+        'The usual cause is lead volume or contract value being off, or revenue that mostly comes from renewals rather ' +
+        'than new clients. Everything below still calculates, but the pipeline figures inherit the gap.</li></ul></div>'
+    : '';
+
+  var freeBlock = '' +
+  '<div class="step-kick">Your report</div>' +
+  cohWarn +
+  '<div class="rep-hero">' +
+    '<div class="gauge-cell">' +
+      gaugeSVG(m.score) +
+      '<div class="gauge-cap"><div class="band">' + esc(m.band.t) + '</div>' +
+        '<div class="bsub">Revenue infrastructure score</div></div>' +
+    '</div>' +
+    '<div class="rep-hero-b">' +
+      '<div class="kick">Conservative annual exposure</div>' +
+      '<div class="big num">' + money(m.net) + '</div>' +
+      '<div class="per">' + moneyFull(m.net/12) + ' a month &nbsp;·&nbsp; ' + moneyFull(m.net/52) + ' a week</div>' +
+      '<p class="read">' + esc(read) + '</p>' +
+    '</div>' +
+  '</div>' +
+
+  '<div class="tiles">' +
+    '<div class="tile dep"><div class="tl">Founder dependency</div><div class="tn num">' + money(m.depTotal) + '</div>' +
+      '<div class="tf">' + dec(m.delegSum,1) + ' delegable hrs/wk at a ' + moneyFull(m.spread) +
+      '/hr spread. Opportunity cost, not cash.</div></div>' +
+    '<div class="tile loss"><div class="tl">Revenue leak</div><div class="tn num">' + money(m.pipeTotal + m.pricedTotal) + '</div>' +
+      '<div class="tf">Pipeline conversion, pricing and expansion revenue lost outright.</div></div>' +
+    '<div class="tile ' + (m.active.length > 8 ? 'loss' : 'ok') + '"><div class="tl">Leaks active</div>' +
+      '<div class="tn num">' + m.active.length + ' <span style="font-size:18px;color:var(--faint)">/ 17</span></div>' +
+      '<div class="tf">' + m.missing.length + ' missing outright' +
+        (m.unanswered > 0 ? ', ' + m.unanswered + ' not assessed' : '') + '.</div></div>' +
+    '<div class="tile ' + (m.trapCount >= 3 ? 'loss' : (m.trapCount > 0 ? 'dep' : 'ok')) + '">' +
+      '<div class="tl">Functions trapped</div>' +
+      '<div class="tn num">' + m.trapCount + ' <span style="font-size:18px;color:var(--faint)">/ 6</span></div>' +
+      '<div class="tf">High founder hours, no system behind them.</div></div>' +
+  '</div>' +
+
+  (m.topSection && m.topSection.activeN > 0
+    ? '<div class="sec" style="margin-top:26px"><div class="sec-h"><h2>Your largest exposure sits in ' +
+        esc(m.topSection.sec.name) + '</h2><span class="sh">Section ' + esc(m.topSection.sec.rn) + '</span></div>' +
+      '<p class="sec-note">' + m.topSection.activeN + ' of the ' + m.topSection.sec.ids.length +
+      ' leaks in this section are active in your business right now. Which ones, what each is costing you, and the ' +
+      'specific fix for each, are in the full report below.</p></div>'
+    : '');
+
+  /* ----- gated: ledger ----- */
+  var ledger = '<div class="ledger">' +
+    '<div class="lr"><div class="ll">Founder dependency<i>' + dec(m.delegSum,1) +
+      ' delegable hours a week across six functions, charged at the ' + moneyFull(m.spread) +
+      ' spread between your rate and a replacement’s</i></div>' +
+      '<div class="lv">' + moneyFull(m.depTotal) + '</div></div>' +
+    '<div class="lr"><div class="ll">Pipeline conversion gap<i>All-benchmark ceiling minus current run rate. One coherent figure, not the sum of the stages</i></div>' +
+      '<div class="lv">' + moneyFull(m.pipeTotal) + '</div></div>' +
+    m.leakRows.filter(function(r){ return r.cost > 0; }).map(function(r){
+      return '<div class="lr"><div class="ll">Leak ' + r.l.id + ': ' + esc(r.l.name) +
+        '<i>' + esc(r.lvl) + '. ' + esc(r.l.basis || '') + '</i></div>' +
+        '<div class="lv">' + moneyFull(r.cost) + '</div></div>';
+    }).join('') +
+    '<div class="lr" style="border-top:1px solid var(--line)"><div class="ll"><b>Gross identified</b></div>' +
+      '<div class="lv">' + moneyFull(m.gross) + '</div></div>' +
+    '<div class="lr adj"><div class="ll">Overlap adjustment, ' + Math.round(OVERLAP_HAIRCUT*100) + '%' +
+      '<i>These causes interact. A positioning problem shows up again as a close-rate problem, so a flat discount is applied rather than claiming both in full</i></div>' +
+      '<div class="lv">&minus;' + moneyFull(m.haircut) + '</div></div>' +
+    '<div class="lr net"><div class="ll">Conservative annual exposure</div>' +
+      '<div class="lv">' + moneyFull(m.net) + '</div></div>' +
+  '</div>';
+
+  /* ----- gated: pipeline detail ----- */
+  var stageRows = m.stages.map(function(s){
+    var scale = Math.max(s.cur, s.bench) * 1.3 || 1;
+    var w = clamp((s.cur/scale)*100, 0, 100);
+    var mk = clamp((s.bench/scale)*100, 0, 100);
+    return '<div class="stage ' + s.st + '">' +
+      '<div class="snm">' + esc(s.nm) + '<i>' + esc(s.sub) + '</i></div>' +
+      '<div class="track"><span class="fill" style="width:' + w.toFixed(1) + '%"></span>' +
+        '<span class="mk" style="left:' + mk.toFixed(1) + '%" data-l="' + s.bench + '%"></span></div>' +
+      '<div class="sv">' + dec(s.cur, s.cur < 10 ? 1 : 0) + '%</div>' +
+      '<div class="sg' + (s.gap < 1 ? ' zero' : '') + '">' + (s.gap < 1 ? 'at bench' : moneyFull(s.gap) + '/yr') + '</div>' +
+    '</div>';
+  }).join('');
+
+  var routedByStage = {};
+  m.leakRows.forEach(function(r){
+    if(r.l.cls === 'routed' && r.lvl && r.lvl !== 'Systemized'){
+      (routedByStage[r.l.route] = routedByStage[r.l.route] || []).push(r.l);
+    }
+  });
+  var routeNote = Object.keys(routedByStage).map(function(k){
+    return '<div class="lk-b" style="margin-top:14px"><div class="blk"><b>' + esc(k) + ' — root causes flagged</b><p>' +
+      routedByStage[k].map(function(l){ return 'Leak ' + l.id + ', ' + esc(l.name.toLowerCase()); }).join('. ') +
+      '. No separate dollar line: these explain the gap above rather than adding to it.</p></div></div>';
+  }).join('');
+
+  /* ----- gated: dependency table ----- */
+  var depRows = m.fnRows.map(function(r){
+    var consPill = r.cons === 'Systemized' ? 'good' : (r.cons === 'Missing' ? 'bad' : (r.cons ? 'mid' : 'flat'));
+    var depPill  = r.depLvl === 'High' ? 'bad' : (r.depLvl === 'Partial' ? 'mid' : (r.depLvl === 'Light' ? 'info' : 'good'));
+    return '<tr>' +
+      '<td><span class="nm">' + esc(r.f.name) + '</span><span class="sub">' + esc(r.f.scope) +
+        (r.trap ? ' &middot; flagged as a trapped function' : '') + '</span></td>' +
+      '<td><span class="pill ' + depPill + '">' + esc(r.depLvl) + '</span></td>' +
+      '<td><span class="pill ' + consPill + '">' + esc(r.cons || 'Not assessed') + '</span></td>' +
+      '<td class="r"><span class="amt dep">' + dec(r.rawHours,0) + ' hrs</span></td>' +
+      '<td class="r"><span class="amt dep">' + dec(r.delegHours,1) + ' hrs</span></td>' +
+      '<td class="r"><span class="amt' + (r.cost < 1 ? ' zero' : ' dep') + '">' +
+        (r.cost < 1 ? '—' : moneyFull(r.cost)) + '</span></td>' +
+    '</tr>';
+  }).join('');
+
+  /* ----- gated: all 17 leaks ----- */
+  var leakBlocks = SECTIONS.map(function(sec){
+    var rows = sec.ids.map(function(id){
+      var r = m.leakRows.filter(function(x){ return x.l.id === id; })[0];
+      var l = r.l;
+      var right;
+      if(r.cost > 0) right = '<span class="amt">' + moneyFull(r.cost) + '/yr</span>';
+      else if(l.cls === 'routed') right = '<span class="pill info">explains ' + esc(l.route) + '</span>';
+      else if(l.cls === 'risk')   right = '<span class="pill mid">risk, not priced</span>';
+      else right = '<span class="amt zero">—</span>';
+      var statePill = !r.lvl ? '<span class="pill flat">Not assessed</span>'
+        : (r.lvl === 'Systemized' ? '<span class="pill good">Systemized</span>'
+        : (r.lvl === 'Ad hoc' ? '<span class="pill mid">Ad hoc</span>' : '<span class="pill bad">Missing</span>'));
+      return '<div class="lk">' +
+        '<div class="lk-h"><span class="no">' + (id < 10 ? '0' : '') + id + '</span><h4>' + esc(l.name) + '</h4>' +
+          statePill + right + '</div>' +
+        (r.lvl === 'Systemized'
+          ? '<div class="lk-b"><div class="blk"><b>Holding</b><p>' +
+              'You reported this as systemized, so it is not costing you anything today. Protect it: this is the kind of thing that quietly slides back onto your plate.</p></div></div>'
+          : '<div class="lk-b">' +
+              '<div class="blk"><b>What leaks here</b><p>' + esc(l.what) + '</p></div>' +
+              '<div class="blk fix"><b>The fix</b><p>' + esc(l.fix) + '</p></div>' +
+            '</div>') +
+      '</div>';
+    }).join('');
+    var secTotal = m.secTotals.filter(function(t){ return t.sec.rn === sec.rn; })[0];
+    return '<div class="sec">' +
+      '<div class="sec-h"><h2>' + esc(sec.rn) + '. ' + esc(sec.name) + '</h2>' +
+        '<span class="sh">' + (secTotal && secTotal.total > 0 ? moneyFull(secTotal.total) + ' priced' : 'no priced lines') + '</span></div>' +
+      rows +
+    '</div>';
+  }).join('');
+
+  /* ----- gated: roadmap ----- */
+  var top = m.priorities.slice(0,5);
+  var roadmap = top.length ? top.map(function(p, i){
+    var phase, sub;
+    if(p.kind === 'dependency'){
+      if(p.cons === 'Missing' || !p.cons){ phase = 'Build the skill'; sub = 'Nothing systematic exists yet'; }
+      else if(p.cons === 'Ad hoc'){ phase = 'Build the system'; sub = 'It happens, unreliably'; }
+      else { phase = 'Build the team'; sub = 'It runs, but through you'; }
+    } else if(p.kind === 'pipeline'){ phase = 'Fix the conversion'; sub = 'Measurable inside 30 days'; }
+    else { phase = 'Close the leak'; sub = 'Process change, not headcount'; }
+    return '<div class="ri">' +
+      '<div class="ph">' + esc(phase) + '<i>' + esc(sub) + '</i></div>' +
+      '<div class="rb"><div class="rn">' + (i+1) + '. ' + esc(p.nm) + '</div>' +
+        '<div class="rd">' + esc(p.detail) + '</div></div>' +
+      '<div class="rv">' + moneyFull(p.amt) + '<i>per year</i></div>' +
+    '</div>';
+  }).join('') : '<p class="sec-note">Nothing priced yet. Fill in the earlier steps to rank your priorities.</p>';
+
+  /* ----- gated: 30/60/90 ----- */
+  var p1 = top[0], p2 = top[1], p3 = top[2];
+  var plan = '<div class="plan">' +
+    '<div class="pcol"><h4>Days 1 to 30</h4><ul>' +
+      '<li><b>Instrument before you optimise.</b> Get the four pipeline rates measured rather than estimated. You cannot price a leak you are guessing at.</li>' +
+      (p1 ? '<li><b>' + esc(p1.nm) + '.</b> Your largest single line at ' + moneyFull(p1.amt) + ' a year. Start here.</li>' : '') +
+      (m.cur.show < BENCH.show ? '<li><b>Confirmation message 24 hours before every call</b>, carrying one question that forces the prospect to prepare. This is the cheapest point on the board.</li>' : '') +
+      '<li><b>Write the "what is not included" section</b> into your proposal template and use it on the next deal out the door.</li>' +
+    '</ul></div>' +
+    '<div class="pcol"><h4>Days 31 to 60</h4><ul>' +
+      (p2 ? '<li><b>' + esc(p2.nm) + '.</b> ' + moneyFull(p2.amt) + ' a year. Second in the sequence because the first fix should be holding by now.</li>' : '') +
+      '<li><b>Stand up the follow-up sequence.</b> 5 to 7 touches, automatic, for every lead who goes quiet. Two days of setup.</li>' +
+      (m.trapCount > 0 ? '<li><b>Document one trapped function</b> as a checklist, then hand off the first piece of it, even partially.</li>' : '') +
+      '<li><b>Build the proposal template</b> with two or three anchored packages, so the middle option is the obvious choice.</li>' +
+    '</ul></div>' +
+    '<div class="pcol"><h4>Days 61 to 90</h4><ul>' +
+      (p3 ? '<li><b>' + esc(p3.nm) + '.</b> ' + moneyFull(p3.amt) + ' a year.</li>' : '') +
+      '<li><b>Add the diagnostic tier.</b> A paid entry offer converts the "interested but not ready" pile that currently converts to nothing.</li>' +
+      '<li><b>Offboarding checklist.</b> Testimonial with a number, referral introduction, next offer presented, all inside 48 hours of the win.</li>' +
+      '<li><b>Re-run this audit.</b> Same inputs, new numbers. The delta is your return on the quarter.</li>' +
+    '</ul></div>' +
+  '</div>';
+
+  /* ----- gated: method ----- */
+  var method = '<div class="method">' +
+    '<h4>Method, assumptions, and what this is not</h4>' +
+    '<ul>' +
+      '<li><b>Benchmarks, not laws.</b> Medians for B2B service businesses at $10k to $100k a month. A specialist practice taking twelve clients a year will read differently, and that is a finding rather than an error.</li>' +
+      '<li><b>Dependency cost is opportunity cost, twice discounted.</b> Only the delegable share of each function is charged (' +
+        FUNCS.map(function(f){ return f.name.toLowerCase() + ' ' + Math.round(f.deleg*100) + '%'; }).join(', ') +
+        '), and only the spread between your ' + moneyFull(m.hourly) + ' implied rate and the ' + moneyFull(m.replRate) +
+        ' you would pay someone to take the work, so ' + moneyFull(m.spread) + ' an hour. Charging your full rate would imply ' +
+        'that delegating your week doubles revenue, which is how these calculators end up quoting more exposure than the business earns.</li>' +
+      '<li><b>Nothing is counted twice.</b> Of the 17 leaks, six carry their own dollar line, nine carry none because they explain a pipeline stage or dependency figure already priced, and two raise risk without a dollar figure. That is the whole reason this total is smaller than a naive sum.</li>' +
+      '<li><b>The pipeline figure is one number, not four.</b> The per-stage amounts answer "what if only this stage hit benchmark" and deliberately overlap, so they are shown as attribution and never added to the ledger.</li>' +
+      '<li><b>The ' + Math.round(OVERLAP_HAIRCUT*100) + '% haircut is deliberate.</b> Root causes interact. Applying it means the headline number understates rather than overstates, which is the only honest direction for a number you did not watch us calculate.</li>' +
+      '<li><b>Garbage in.</b> If you estimated your show rate, this output is an estimate with better typography. The single most valuable thing on this page may be discovering which of these five numbers you do not actually track.</li>' +
+      (m.overRevenue > 0.6 ? '<li><b>Flag: your exposure is ' + Math.round(m.overRevenue*100) + '% of annual revenue.</b> Above roughly 60% that usually means one input is off by an order of magnitude, most often hours or lead volume. Worth a second look before you act on it.</li>' : '') +
+    '</ul>' +
+    '<div class="calc">' +
+      'Implied hourly value ' + moneyFull(m.hourly) + ' &nbsp;·&nbsp; replacement ' + moneyFull(m.replRate) +
+      ' &nbsp;·&nbsp; charged spread ' + moneyFull(m.spread) + '<br>' +
+      dec(m.rawHoursSum,0) + ' of ' + dec(m.weeklyHours,0) + ' weekly hours allocated &nbsp;·&nbsp; ' +
+      dec(m.delegSum,1) + ' delegable &nbsp;·&nbsp; pipeline-implied revenue ' + moneyFull(m.impliedRev) +
+      ' vs ' + moneyFull(m.annualRev) + ' stated<br>' +
+      'Pipeline now ' + dec(m.wonPerMo,1) + ' clients/mo &nbsp;·&nbsp; at benchmark ' + dec(m.wonCeilMo,1) + ' clients/mo &nbsp;·&nbsp; ' +
+      moneyFull(m.pipeRevNow) + ' vs ' + moneyFull(m.pipeRevCeil) + ' per year<br>' +
+      'Score components: pipeline ' + Math.round(m.parts.funnel*100) + ' &nbsp;·&nbsp; independence ' + Math.round(m.parts.indep*100) +
+      ' &nbsp;·&nbsp; systemization ' + Math.round(m.parts.sys*100) + ' &nbsp;·&nbsp; retention ' + Math.round(m.parts.ret*100) +
+      ' &nbsp;(weighted 30/30/25/15)' +
+    '</div>' +
+  '</div>';
+
+  /* ----- the gate card ----- */
+  var gateCard = '' +
+  '<div class="gate-card">' +
+    '<div class="gc-strip"></div>' +
+    '<div class="gc-in">' +
+      '<div class="gc-lock">&#9788; ' + (m.active.length || 'Your') + ' findings locked</div>' +
+      '<h3>Your score is free. The diagnosis is worth an email.</h3>' +
+      '<p class="gc-p">You have the headline number. Below it sits the part that actually changes what you do on Monday:</p>' +
+      '<ul class="gc-list">' +
+        '<li>The full exposure ledger, line by line, with every assumption shown</li>' +
+        '<li>All 17 leaks named and scored, with the specific fix for each active one</li>' +
+        '<li>Your pipeline benchmarked stage by stage, with the dollar gap on each</li>' +
+        '<li>Six functions ranked by what your time in them costs, and which are trapped</li>' +
+        '<li>A payback-ranked priority list and your 30, 60 and 90 day sequence</li>' +
+      '</ul>' +
+      '<form class="gform" id="gateForm" novalidate>' +
+        '<div class="grow2">' +
+          '<div><label for="ld_name">Your name</label><input type="text" id="ld_name" autocomplete="name" placeholder="Alex Mercer"></div>' +
+          '<div><label for="ld_email">Work email</label><input type="email" id="ld_email" autocomplete="email" placeholder="alex@company.com"></div>' +
+        '</div>' +
+        '<div class="grow2">' +
+          '<div><label for="ld_site">Company or website</label><input type="text" id="ld_site" autocomplete="organization" placeholder="mercerpartners.com"></div>' +
+          '<div><label for="ld_role">Your role</label><select id="ld_role">' +
+            '<option value="">Select</option>' +
+            '<option>Founder, solo or fractional</option>' +
+            '<option>Founder with a small team</option>' +
+            '<option>Agency owner</option>' +
+            '<option>Consultant or advisor</option>' +
+            '<option>Operator or COO</option>' +
+            '<option>Other</option>' +
+          '</select></div>' +
+        '</div>' +
+        '<div><label for="ld_constraint">What is actually holding you back right now</label><select id="ld_constraint">' +
+          '<option value="">Select</option>' +
+          '<option>Not enough qualified leads</option>' +
+          '<option>Leads come in but do not convert</option>' +
+          '<option>Everything runs through me</option>' +
+          '<option>Revenue is there but margin is not</option>' +
+          '<option>Clients do not stay or expand</option>' +
+          '<option>I do not know, that is why I am here</option>' +
+        '</select></div>' +
+        '<div class="gsubmit"><button class="btn primary" type="submit" id="gateSubmit">Unlock my full report &mdash; free</button></div>' +
+        '<div class="gmsg" id="gateMsg"></div>' +
+        '<div class="gfine">No spam and no sequence you cannot leave. Your report and the occasional teardown on fixing this exact problem. Unsubscribe in one click.</div>' +
+      '</form>' +
+    '</div>' +
+  '</div>';
+
+  /* ----- the CTA ----- */
+  var worst = m.priorities[0];
+  var cta = '' +
+  '<section class="cta">' +
+    '<div class="strip"></div>' +
+    '<div class="cin">' +
+      '<div>' +
+        '<h3>This sized the problem. The diagnostic solves it.</h3>' +
+        '<p class="cp">This page ran on numbers you typed in from memory, against medians. ' +
+          'The <b>Revenue Infrastructure Diagnostic</b> runs on your actual ninety days: your real pipeline data, one recorded sales call, ' +
+          'your proposal template, your delivery process' +
+          (worst ? ', and a direct look at <b>' + esc(worst.nm.toLowerCase()) + '</b>, which this audit puts at ' + moneyFull(worst.amt) + ' a year' : '') +
+          '.</p>' +
+        '<ul class="inc">' +
+          '<li>A 45 to 60 minute deep dive, recorded, with the model open in front of us</li>' +
+          '<li>Two day turnaround on a written diagnostic report, not a slide deck</li>' +
+          '<li>Every leak priced against your real numbers, ranked by payback speed</li>' +
+          '<li>A specific 30, 60 and 90 day plan with owners and success measures</li>' +
+          '<li>The model itself, so you can re-run it yourself each quarter</li>' +
+        '</ul>' +
+      '</div>' +
+      '<div class="cta-box">' +
+        '<div class="price">$' + price + '</div>' +
+        '<div class="anchor">' +
+          (priceShareTxt
+            ? 'That is <b>' + priceShareTxt + '</b> of the ' + money(m.net) + ' this audit says you are leaking each year.'
+            : 'Fixed fee. No retainer, no proposal, no discovery call to book a discovery call.') +
+        '</div>' +
+        '<div class="btns">' +
+          '<a class="btn primary" id="bookBtn" href="' + esc(CONFIG.calendlyUrl) + '" target="_blank" rel="noopener">Book my diagnostic call</a>' +
+          '<button class="btn ghost-brass" type="button" id="printBtn">Download my report</button>' +
+        '</div>' +
+        '<div class="terms">Paid diagnostic. If the call finds less than the fee is worth, we say so and refund it.</div>' +
+      '</div>' +
+    '</div>' +
+  '</section>';
+
+  /* ----- assemble ----- */
+  return freeBlock +
+  '<div class="gate-zone' + (locked ? ' locked' : '') + '" id="gateZone">' +
+    (locked ? gateCard : '') +
+    '<div class="gz-body">' +
+      '<div class="sec"><div class="sec-h"><h2>Exposure ledger</h2><span class="sh">annual, every line shown</span></div>' +
+        '<p class="sec-note">Every number that makes up your headline figure, including the adjustment that brings it down. ' +
+        'Nothing here is counted twice; the Method section at the bottom explains exactly how that is enforced.</p>' +
+        ledger + '</div>' +
+
+      '<div class="sec"><div class="sec-h"><h2>Pipeline, stage by stage</h2>' +
+        '<span class="sh">' + dec(m.leads,0) + ' qualified leads / month</span></div>' +
+        '<p class="sec-note">The dollar figure on each stage answers one question: what if only this stage hit benchmark. ' +
+        'They overlap on purpose, which is why the ledger above carries a single pipeline figure instead of their sum.</p>' +
+        stageRows +
+        '<div class="legend"><span><i class="a"></i>below benchmark</span><span><i class="b"></i>close to it</span>' +
+        '<span><i class="c"></i>at or above</span><span><i class="d"></i>benchmark</span></div>' +
+        routeNote + '</div>' +
+
+      '<div class="sec"><div class="sec-h"><h2>Founder dependency by function</h2>' +
+        '<span class="sh">' + moneyFull(m.hourly) + ' implied &middot; ' + moneyFull(m.spread) + ' charged</span></div>' +
+        '<p class="sec-note">A function is flagged as trapped when it takes five or more of your hours a week and has no system behind it. ' +
+        'That is the combination that caps a business at one person’s capacity.</p>' +
+        '<div class="tbl-scroll"><table class="rt"><thead><tr>' +
+          '<th>Function</th><th>Dependency</th><th>Consistency</th><th class="r">Your hours</th>' +
+          '<th class="r">Delegable</th><th class="r">Annual cost</th></tr></thead>' +
+          '<tbody>' + depRows +
+          '<tr class="tot"><td>Total</td><td></td><td></td>' +
+            '<td class="r"><span class="amt dep">' + dec(m.rawHoursSum,0) + ' hrs</span></td>' +
+            '<td class="r"><span class="amt dep">' + dec(m.delegSum,1) + ' hrs</span></td>' +
+            '<td class="r"><span class="amt dep">' + moneyFull(m.depTotal) + '</span></td></tr>' +
+          '</tbody></table></div></div>' +
+
+      '<div class="sec" style="margin-top:44px"><div class="sec-h"><h2>All 17 leaks</h2>' +
+        '<span class="sh">' + m.active.length + ' active &middot; ' + m.missing.length + ' missing</span></div>' +
+        '<p class="sec-note">Six of these carry their own dollar line. Nine carry none, because they explain a number already priced above. ' +
+        'Two raise risk without a figure. All 17 carry a fix.</p></div>' +
+      leakBlocks +
+
+      '<div class="sec" style="margin-top:44px"><div class="sec-h"><h2>Fix it in this order</h2>' +
+        '<span class="sh">ranked by dollars over payback speed</span></div>' +
+        '<p class="sec-note">Not simply largest first. A ' + moneyFull(8000) + ' fix you can ship this fortnight outranks a ' +
+        moneyFull(20000) + ' one that needs a hire.</p>' +
+        '<div class="road">' + roadmap + '</div></div>' +
+
+      '<div class="sec"><div class="sec-h"><h2>Your next ninety days</h2><span class="sh">sequenced, not a checklist</span></div>' +
+        plan + '</div>' +
+
+      method +
+    '</div>' +
+  '</div>' +
+  cta +
+  '<div class="nav"><button class="btn" id="backBtn" type="button">&larr; Back to my answers</button>' +
+    '<span class="spacer"></span>' +
+    '<span class="note">' + (state.unlocked ? 'Report unlocked' : 'Report locked') + '</span></div>';
+}
+
+/* ==================================================================
+   RENDER + EVENTS
+   ================================================================== */
+function render(scroll){
+  var m = computeModel();
+  renderRail();
+  el('panel').innerHTML = STEPS[state.step].render(m);
+  renderTicker(m);
+  bind(m);
+  if(scroll !== false) window.scrollTo({ top:0, behavior:'instant' });
+}
+
+function refreshLive(){
+  renderTicker(computeModel());
+}
+
+function bind(m){
+  var panel = el('panel');
+
+  /* number inputs */
+  Array.prototype.forEach.call(panel.querySelectorAll('input[type=number]'), function(inp){
+    inp.addEventListener('input', function(){
+      var id = inp.id, v = inp.value === '' ? null : inp.value;
+      if(id in state.biz) state.biz[id] = v;
+      else if(id in state.pipe) state.pipe[id] = v;
+      else if(id in state.assume) state.assume[id] = (v === null ? 0 : v);
+      else if(id.indexOf('fn_') === 0){
+        var parts = id.split('_');
+        state.fn[parts[1]][parts[2]] = v;
+      }
+      save(); refreshLive();
+    });
+  });
+
+  /* segmented controls */
+  Array.prototype.forEach.call(panel.querySelectorAll('.seg'), function(seg){
+    Array.prototype.forEach.call(seg.querySelectorAll('button'), function(btn){
+      btn.addEventListener('click', function(){
+        var field = seg.getAttribute('data-field');
+        var val = btn.getAttribute('data-val');
+        if(field.indexOf('leak_') === 0){
+          state.leaks[parseInt(field.slice(5),10)] = val;
+          var wrap = seg.closest('.lsec');
+          if(wrap){
+            var secDef = SECTIONS.filter(function(s){
+              return s.ids.indexOf(parseInt(field.slice(5),10)) !== -1; })[0];
+            var done = secDef.ids.filter(function(i){ return state.leaks[i]; }).length;
+            var cnt = wrap.querySelector('.lsec-h .cnt');
+            if(cnt) cnt.textContent = done + ' / ' + secDef.ids.length + ' answered';
+          }
+        } else if(field.indexOf('fn_') === 0){
+          var p = field.split('_');
+          state.fn[p[1]][p[2]] = val;
+        }
+        Array.prototype.forEach.call(seg.querySelectorAll('button'), function(b){ b.classList.remove('sel'); });
+        btn.classList.add('sel');
+        save(); refreshLive();
+      });
+    });
+  });
+
+  /* nav */
+  var back = el('backBtn'), next = el('nextBtn');
+  if(back) back.addEventListener('click', function(){
+    state.step = Math.max(0, state.step - 1); save(); render();
+  });
+  if(next) next.addEventListener('click', function(){
+    state.step = Math.min(STEPS.length - 1, state.step + 1); save(); render();
+  });
+
+  /* gate */
+  var form = el('gateForm');
+  if(form) form.addEventListener('submit', function(e){ e.preventDefault(); submitGate(); });
+
+  /* print */
+  var pb = el('printBtn');
+  if(pb) pb.addEventListener('click', function(){
+    if(!state.unlocked){
+      var gz = el('gateZone');
+      if(gz) gz.scrollIntoView({ behavior:'smooth', block:'start' });
+      return;
+    }
+    window.print();
+  });
+}
+
+/* ==================================================================
+   LEAD CAPTURE
+   ================================================================== */
+function leadPayload(m){
+  return {
+    source: 'revenue-infrastructure-audit',
+    brand: CONFIG.brand,
+    submittedAt: new Date().toISOString(),
+    contact: state.lead,
+    score: m.score,
+    band: m.band.t,
+    annualExposure: Math.round(m.net),
+    grossExposure: Math.round(m.gross),
+    founderDependencyCost: Math.round(m.depTotal),
+    pipelineGap: Math.round(m.pipeTotal),
+    pricedLeakTotal: Math.round(m.pricedTotal),
+    impliedHourlyValue: Math.round(m.hourly),
+    leaksActive: m.active.length,
+    leaksMissing: m.missing.length,
+    leaksNotAssessed: m.unanswered,
+    trappedFunctions: m.trapCount,
+    topSection: m.topSection ? m.topSection.sec.name : null,
+    topPriority: m.priorities[0] ? { name:m.priorities[0].nm, annual:Math.round(m.priorities[0].amt) } : null,
+    inputs: { biz:state.biz, pipeline:state.pipe, functions:state.fn, leaks:state.leaks }
+  };
+}
+
+function mailtoFallback(payload, m){
+  var L = [];
+  L.push('New Revenue Infrastructure Audit completed.');
+  L.push('');
+  L.push('CONTACT');
+  L.push('Name: ' + (state.lead.name || '—'));
+  L.push('Email: ' + state.lead.email);
+  L.push('Company: ' + (state.lead.site || '—'));
+  L.push('Role: ' + (state.lead.role || '—'));
+  L.push('Stated constraint: ' + (state.lead.constraint || '—'));
+  L.push('');
+  L.push('HEADLINE');
+  L.push('Score: ' + m.score + '/100 (' + m.band.t + ')');
+  L.push('Conservative annual exposure: ' + moneyFull(m.net));
+  L.push('Founder dependency: ' + moneyFull(m.depTotal) + ' | Pipeline gap: ' + moneyFull(m.pipeTotal) +
+         ' | Priced leaks: ' + moneyFull(m.pricedTotal));
+  L.push('Implied hourly value: ' + moneyFull(m.hourly));
+  L.push('Leaks active: ' + m.active.length + '/17 (' + m.missing.length + ' missing, ' + m.unanswered + ' not assessed)');
+  L.push('Trapped functions: ' + m.trapCount + '/6');
+  L.push('');
+  L.push('TOP PRIORITIES');
+  m.priorities.slice(0,5).forEach(function(p, i){
+    L.push((i+1) + '. ' + p.nm + ' — ' + moneyFull(p.amt) + '/yr');
+  });
+  L.push('');
+  L.push('RAW INPUTS');
+  L.push(JSON.stringify(payload.inputs));
+  var subject = 'Audit: ' + (state.lead.site || state.lead.email) + ' — ' + moneyFull(m.net) + '/yr, score ' + m.score;
+  return 'mailto:' + CONFIG.contactEmail +
+    '?subject=' + encodeURIComponent(subject) +
+    '&body=' + encodeURIComponent(L.join('\n'));
+}
+
+function submitGate(){
+  var msg = el('gateMsg');
+  var name = (el('ld_name').value || '').trim();
+  var email = (el('ld_email').value || '').trim();
+  var site = (el('ld_site').value || '').trim();
+  var role = el('ld_role').value;
+  var constraint = el('ld_constraint').value;
+
+  var validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  if(!name){ msg.className = 'gmsg err'; msg.textContent = 'Add your name so the report is addressed to someone.'; el('ld_name').focus(); return; }
+  if(!validEmail){ msg.className = 'gmsg err'; msg.textContent = 'That email will not reach you. Check it and try again.'; el('ld_email').focus(); return; }
+  if(!role){ msg.className = 'gmsg err'; msg.textContent = 'Pick the role that fits closest. It changes how we read your numbers.'; el('ld_role').focus(); return; }
+
+  state.lead = { name:name, email:email, site:site, role:role, constraint:constraint };
+  var m = computeModel();
+  var payload = leadPayload(m);
+  var btn = el('gateSubmit');
+  btn.disabled = true;
+  msg.className = 'gmsg'; msg.textContent = 'Unlocking…';
+
+  var finish = function(note){
+    state.unlocked = true;
+    save();
+    render(false);
+    var gz = el('gateZone');
+    if(gz) gz.scrollIntoView({ behavior:'smooth', block:'start' });
+    var nm = el('gateMsg');
+    if(nm){ nm.className = 'gmsg ok'; nm.textContent = note; }
+  };
+
+  if(CONFIG.leadEndpoint){
+    var opts;
+    if(CONFIG.leadEndpointMode === 'form'){
+      var fd = new FormData();
+      Object.keys(payload).forEach(function(k){
+        fd.append(k, typeof payload[k] === 'object' ? JSON.stringify(payload[k]) : String(payload[k]));
+      });
+      opts = { method:'POST', body:fd };
+    } else {
+      opts = { method:'POST', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify(payload) };
+    }
+    fetch(CONFIG.leadEndpoint, opts)
+      .then(function(){ finish('Report unlocked. A copy is on its way to ' + email + '.'); })
+      .catch(function(){
+        /* Never punish a visitor for our network. Unlock anyway, keep the
+           lead locally, and let them send it themselves if they want to. */
+        try { localStorage.setItem('txl-ria-lead', JSON.stringify(payload)); } catch(e){}
+        finish('Report unlocked. We could not reach our server, so email hi@thrivexlabs.com if you want your copy sent.');
+      });
+  } else {
+    try { localStorage.setItem('txl-ria-lead', JSON.stringify(payload)); } catch(e){}
+    var href = mailtoFallback(payload, m);
+    finish('Report unlocked. Your mail client is opening with your results, hit send and we will have your copy.');
+    setTimeout(function(){ window.location.href = href; }, 700);
+  }
+}
+
+/* ==================================================================
+   BOOT
+   ================================================================== */
+el('footYear').textContent = new Date().getFullYear();
+
+el('restartBtn').addEventListener('click', function(){
+  if(!window.confirm('Clear every answer and start the audit again?')) return;
+  try { localStorage.removeItem(STORE); } catch(e){}
+  state = blankState();
+  render();
+});
+
+load();
+render(false);
+
+})();
+</script>
+</body>
+</html>
