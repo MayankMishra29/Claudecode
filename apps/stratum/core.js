@@ -220,6 +220,15 @@ export function leaderboard(){
   return rows.map((r, i) => ({ ...r, rank: i + 1 }));
 }
 
+/* --------------------------------------------------------------- teardown */
+/* Views register cleanup here; the router runs it before swapping pages.
+   A DOM event cannot do this job because it never reaches descendants. */
+const teardowns = [];
+export function onTeardown(fn){ teardowns.push(fn); }
+export function runTeardowns(){
+  while (teardowns.length){ try{ teardowns.pop()(); }catch(e){ /* keep unwinding */ } }
+}
+
 /* ------------------------------------------------------------------ toast */
 export function toast(msg, ico = 'check'){
   const box = $('#toasts'); if (!box) return;

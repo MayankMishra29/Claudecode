@@ -31,10 +31,10 @@
 <div id="toasts" aria-live="polite"></div>
 
 <script type="module">
-import { h, $, icon, S, save, toast, modal, touchStreak, levelOf, isPaid } from './core.js';
+import { h, $, icon, S, save, toast, modal, touchStreak, levelOf, isPaid, runTeardowns } from './core.js';
 import {
   dashboard, quizHome, quizRun, crossword, studyAids, blogList, article,
-  resources, mentor, community, careers, progress, plans,
+  resources, mentor, community, careers, progress, plans, fieldLab,
 } from './views.js';
 
 /* ------------------------------------------------------------------ nav */
@@ -43,6 +43,7 @@ const NAV = [
     { id:'',           label:'Dashboard',  ico:'dash',  band:'var(--azurite)',    title:'Dashboard' },
     { id:'quiz',       label:'Quizzes',    ico:'quiz',  band:'var(--c-gis)',      title:'Quizzes' },
     { id:'crossword',  label:'Crossword',  ico:'grid',  band:'var(--c-geology)',  title:'Daily crossword' },
+    { id:'lab',        label:'Field Lab',  ico:'shelf', band:'var(--c-earth)',    title:'Field Lab', tail:'3D' },
     { id:'study',      label:'Study aids', ico:'cards', band:'var(--c-earth)',    title:'Glossary and flashcards' },
   ]},
   { group:'Library', items:[
@@ -70,10 +71,11 @@ function buildNav(){
         style:{ '--band': it.band }, 'data-id': it.id,
         onclick: () => { location.hash = '#/' + it.id; },
       }, icon(it.ico), h('span', it.label),
-         (it.id === 'plans' && !isPaid()) ? h('span.tail', 'free') : null))));
+         it.tail ? h('span.tail', it.tail)
+           : (it.id === 'plans' && !isPaid()) ? h('span.tail', 'free') : null))));
   }
   const tabs = $('#tabbar'); tabs.replaceChildren();
-  for (const it of FLAT.filter(i => ['', 'quiz', 'crossword', 'study', 'blog', 'mentor', 'progress'].includes(i.id))){
+  for (const it of FLAT.filter(i => ['', 'lab', 'quiz', 'crossword', 'study', 'mentor', 'progress'].includes(i.id))){
     tabs.append(h('button.tabbtn', { 'data-id': it.id, onclick: () => { location.hash = '#/' + it.id; } },
       icon(it.ico), h('span', it.label)));
   }
@@ -121,6 +123,7 @@ function route(){
   const key = seg[0] || '';
 
   if (currentView) currentView.dispatchEvent(new Event('stratum:teardown'));
+  runTeardowns();
 
   let node, title;
   switch (key){
@@ -130,6 +133,7 @@ function route(){
       else { node = quizHome(); title = 'Quizzes'; }
       break;
     case 'crossword': node = crossword();               title = 'Daily crossword'; break;
+    case 'lab':       node = fieldLab(seg[1]);          title = 'Field Lab'; break;
     case 'study':     node = studyAids();               title = 'Glossary and flashcards'; break;
     case 'blog':      node = seg[1] ? article(seg[1]) : blogList(); title = 'Articles'; break;
     case 'resources': node = resources();               title = 'Resource shelf'; break;

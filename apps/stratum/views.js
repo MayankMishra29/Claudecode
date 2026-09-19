@@ -6,7 +6,7 @@ import {
 import {
   h, $, icon, S, save, toast, modal, addXp, touchStreak, recordAnswer, accuracy,
   weakestTopic, adaptiveLevel, levelOf, intoLevel, LEVEL_STEP, isPaid, requirePaid,
-  leaderboard, mentorReply, buildCrossword, daySeed, checkBadges, resetAll,
+  leaderboard, mentorReply, buildCrossword, daySeed, checkBadges, resetAll, onTeardown,
 } from './core.js';
 
 const rerender = () => window.dispatchEvent(new Event('stratum:render'));
@@ -127,6 +127,8 @@ export function dashboard(){
   const rank = leaderboard().find(r => r.me).rank;
 
   const wrap = h('div');
+
+  wrap.append(h('div', { style:{ marginBottom:'18px' } }, globeHero()));
 
   wrap.append(
     h('div.grid.g4', { style:{ marginBottom:'18px' } },
@@ -1136,6 +1138,7 @@ export function plans(){
       h('tbody',
         [['Beginner + intermediate quizzes', 1, 1, 1],
          ['Daily crossword and glossary', 1, 1, 1],
+         ['3D Field Lab, all four instruments', 1, 1, 1],
          ['Advanced quiz bank', 0, 1, 1],
          ['Premium articles', 0, 1, 1],
          ['Timed practice sessions', 0, 1, 1],
@@ -1149,4 +1152,258 @@ export function plans(){
             ? icon('check', 'ico')
             : h('span', { style:{ color:'var(--ink-3)' } }, '–')))))))));
   return wrap;
+}
+
+/* ============================================================ FIELD LAB === */
+import { tectonicGlobe, coreColumn, terrainLab, crystalViewer } from './scenes.js';
+import { PLATE_KINDS, QUAKES, CORE_LAYERS, CRYSTALS, TERRAIN_LAYERS, PLATES } from './geodata.js';
+
+const LAB_TABS = [
+  { id:'globe',   label:'Tectonic globe', ico:'dash'  },
+  { id:'core',    label:'Core sample',    ico:'shelf' },
+  { id:'terrain', label:'Terrain',        ico:'chart' },
+  { id:'crystal', label:'Crystals',       ico:'grid'  },
+];
+
+export function fieldLab(tab){
+  let cur = LAB_TABS.some(t => t.id === tab) ? tab : (S._labTab || 'globe');
+  const wrap = h('div');
+  const body = h('div');
+  let scene = null;
+
+  const kill = () => { if (scene){ scene.destroy(); scene = null; } };
+  onTeardown(kill);
+
+  const seg = h('div.seg', LAB_TABS.map(t =>
+    h('button', { 'aria-pressed': String(t.id === cur), 'data-t': t.id, onclick: () => {
+      cur = t.id; S._labTab = t.id; save();
+      [...seg.children].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === cur)));
+      paint();
+    } }, t.label)));
+
+  function paint(){
+    kill();
+    const built = cur === 'globe' ? labGlobe() : cur === 'core' ? labCore()
+                : cur === 'terrain' ? labTerrain() : labCrystal();
+    scene = built.scene;
+    body.replaceChildren(built.node);
+  }
+
+  wrap.append(
+    h('p.page-intro', 'Four instruments you can actually handle. Drag to rotate, scroll to zoom, and click anything that highlights. Everything renders in your browser from the data in the app, with no imagery downloaded.'),
+    h('div', { style:{ marginBottom:'16px' } }, seg),
+    body);
+  paint();
+  return wrap;
+}
+
+/* ---------------------------------------------------------- lab: globe */
+function labGlobe(){
+  const stage = h('div.scene-stage');
+  const info = h('div.scene-info');
+  let opts = { plates:true, quakes:true };
+
+  function showDefault(){
+    info.replaceChildren(
+      h('div.eyebrow', 'Tectonic globe'),
+      h('h3', { style:{ fontSize:'17px', margin:'6px 0 8px' } }, 'Click a boundary or an epicentre'),
+      h('p', { style:{ fontSize:'14px', color:'var(--ink-2)' } },
+        'Fourteen major plate boundaries, coloured by what the plates are doing to each other, with fourteen real earthquakes plotted at their published epicentres. The pattern is the lesson: almost every large event sits on a line.'),
+      h('div.stack', { style:{ gap:'6px', marginTop:'14px' } },
+        Object.entries(PLATE_KINDS).map(([k, v]) => h('div.row', { style:{ gap:'8px' } },
+          h('span', { style:{ width:'14px', height:'3px', borderRadius:'2px', flex:'0 0 14px',
+            background:`rgb(${v.col.map(x => Math.round(x * 255)).join(',')})` } }),
+          h('span', { style:{ fontSize:'12.5px', color:'var(--ink-2)' } }, v.label)))));
+  }
+
+  function showSel(sel){
+    if (!sel) return showDefault();
+    if (sel.type === 'quake'){
+      const q = sel.data;
+      info.replaceChildren(
+        h('div.eyebrow', 'Earthquake · recorded event'),
+        h('h3', { style:{ fontSize:'19px', margin:'6px 0 2px' } }, q.name),
+        h('div.num', { style:{ fontSize:'30px', color:'var(--cinnabar)' } }, 'M', q.mag.toFixed(1)),
+        h('p.mono', { style:{ fontSize:'12px', color:'var(--ink-3)', marginTop:'4px' } },
+          `${q.year} · ${q.lat.toFixed(2)}°, ${q.lon.toFixed(2)}°`),
+        h('p', { style:{ fontSize:'13.5px', color:'var(--ink-2)', marginTop:'12px' } },
+          `Each magnitude unit is about 32 times the radiated energy. This event released roughly ${Math.round(Math.pow(10, 1.5 * (q.mag - 6)))}x the energy of a magnitude 6.`),
+        h('button.btn.btn-sm', { style:{ marginTop:'14px' },
+          onclick: () => { location.hash = '#/quiz/earth'; } }, icon('quiz'), 'Test me on seismology'));
+    } else {
+      const p = sel.data, k = sel.kind;
+      info.replaceChildren(
+        h('div.eyebrow', 'Plate boundary'),
+        h('h3', { style:{ fontSize:'18px', margin:'6px 0 8px' } }, p.name),
+        h('span.tag', { style:{ background:'var(--surface-2)', color:'var(--ink-2)',
+          borderColor:'var(--line)' } }, k.label),
+        h('p', { style:{ fontSize:'14px', color:'var(--ink-2)', marginTop:'12px' } }, k.note),
+        h('button.btn.btn-sm', { style:{ marginTop:'14px' },
+          onclick: () => { location.hash = '#/quiz/geology'; } }, icon('quiz'), 'Test me on plate tectonics'));
+    }
+  }
+
+  const scene = tectonicGlobe(stage, { onSelect: showSel });
+  const toggle = (label, key) => h('button.hud-btn', {
+    'aria-pressed': String(opts[key]),
+    onclick: e => {
+      opts[key] = !opts[key];
+      e.currentTarget.setAttribute('aria-pressed', String(opts[key]));
+      if (key === 'plates') scene.showPlates = opts.plates; else scene.showQuakes = opts.quakes;
+    } }, label);
+
+  const node = h('div.lab-split',
+    h('div.scene',
+      stage,
+      h('div.hud.tl', toggle('Plate boundaries', 'plates'), toggle('Earthquakes', 'quakes')),
+      h('div.hud.br', h('span.hud-tag', 'drag · scroll · click'))),
+    h('div.stack', { style:{ gap:'12px' } },
+      info,
+      h('div.card',
+        h('div.eyebrow', { style:{ marginBottom:'8px' } }, 'Jump to an epicentre'),
+        h('div.stack', { style:{ gap:'1px' } },
+          QUAKES.slice(0, 8).map(q => h('button.clue', {
+            onclick: () => { scene.flyTo(q.lat, q.lon); showSel({ type:'quake', data:q }); } },
+            h('span.cn', 'M' + q.mag.toFixed(1)), h('span', `${q.name}, ${q.year}`)))))));
+  showDefault();
+  return { node, scene };
+}
+
+/* ----------------------------------------------------------- lab: core */
+function labCore(){
+  const stage = h('div.scene-stage.tall');
+  const info = h('div.scene-info');
+  const rows = h('div.strat');
+  let scene;
+
+  function paintRows(sel){
+    rows.replaceChildren(...CORE_LAYERS.map((L, i) => h('button.strat-row', {
+      'aria-pressed': String(i === sel),
+      onclick: () => scene.select(i === sel ? -1 : i),
+    },
+      h('span.strat-band', { style:{ background:`rgb(${L.col.map(x => Math.round(x * 255)).join(',')})` } }),
+      h('span', h('span.nm', L.name), h('span.ag', `${L.unit} · ${L.age}`)))).reverse());
+  }
+  function showSel(sel){
+    paintRows(sel ? sel.i : -1);
+    if (!sel){
+      info.replaceChildren(
+        h('div.eyebrow', 'Composite section · peninsular India'),
+        h('h3', { style:{ fontSize:'17px', margin:'6px 0 8px' } }, 'Click a band, in the core or the log'),
+        h('p', { style:{ fontSize:'14px', color:'var(--ink-2)' } },
+          'Seven units spanning more than 2.5 billion years, youngest at the top. Band thickness is proportional to the thickness in the section, not to the time it represents — the two rarely agree, which is what makes an unconformity worth hunting for.'));
+      return;
+    }
+    const L = sel.layer;
+    info.replaceChildren(
+      h('div.eyebrow', L.rock),
+      h('h3', { style:{ fontSize:'19px', margin:'6px 0 2px' } }, L.name),
+      h('p.mono', { style:{ fontSize:'12px', color:'var(--ink-3)' } }, `${L.unit} · ${L.age}`),
+      h('p', { style:{ fontSize:'14px', color:'var(--ink-2)', marginTop:'12px' } }, L.note),
+      h('button.btn.btn-sm', { style:{ marginTop:'14px' },
+        onclick: () => { location.hash = '#/quiz/geology'; } }, icon('quiz'), 'Test me on this'));
+  }
+  scene = coreColumn(stage, { onSelect: showSel });
+
+  const node = h('div.lab-split',
+    h('div.scene',
+      stage,
+      h('div.hud.tl', h('span.hud-tag', 'youngest at top')),
+      h('div.hud.br', h('span.hud-tag', 'drag · click a band'))),
+    h('div.stack', { style:{ gap:'12px' } },
+      info,
+      h('div.card', h('div.eyebrow', { style:{ marginBottom:'8px' } }, 'Graphic log'), rows)));
+  showSel(null);
+  return { node, scene };
+}
+
+/* -------------------------------------------------------- lab: terrain */
+function labTerrain(){
+  const stage = h('div.scene-stage');
+  const info = h('div.scene-info');
+  let cur = 'hillshade';
+  const scene = terrainLab(stage, { layer: cur });
+
+  function show(){
+    const L = TERRAIN_LAYERS.find(x => x.id === cur);
+    info.replaceChildren(
+      h('div.eyebrow', 'Raster product'),
+      h('h3', { style:{ fontSize:'18px', margin:'6px 0 8px' } }, L.label),
+      h('p', { style:{ fontSize:'14px', color:'var(--ink-2)' } }, L.note),
+      h('p', { style:{ fontSize:'13px', color:'var(--ink-2)', marginTop:'14px',
+        paddingTop:'12px', borderTop:'1px solid var(--line)' } },
+        'The elevation model underneath never changes. Every one of these is derived from the same grid of heights, which is the whole idea of raster analysis: one measured surface, many products.'),
+      h('button.btn.btn-sm', { style:{ marginTop:'14px' },
+        onclick: () => { location.hash = '#/quiz/gis'; } }, icon('quiz'), 'Test me on rasters'));
+  }
+  const btns = h('div.hud.tl', TERRAIN_LAYERS.map(L =>
+    h('button.hud-btn', { 'aria-pressed': String(L.id === cur), 'data-l': L.id, onclick: e => {
+      cur = L.id; scene.setLayer(cur);
+      [...btns.children].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.l === cur)));
+      show();
+    } }, L.label)));
+
+  const node = h('div.lab-split',
+    h('div.scene', stage, btns, h('div.hud.br', h('span.hud-tag', 'drag · scroll'))),
+    info);
+  show();
+  return { node, scene };
+}
+
+/* -------------------------------------------------------- lab: crystal */
+function labCrystal(){
+  const stage = h('div.scene-stage');
+  const info = h('div.scene-info');
+  let cur = 0;
+  const scene = crystalViewer(stage, { index: cur });
+  const list = h('div.stack', { style:{ gap:'1px' } });
+
+  function show(){
+    const C = CRYSTALS[cur];
+    info.replaceChildren(
+      h('div.eyebrow', 'Crystal system'),
+      h('h3', { style:{ fontSize:'19px', margin:'6px 0 8px' } }, C.sys),
+      h('p', { style:{ fontSize:'14px', color:'var(--ink-2)' } }, C.note),
+      h('p.eyebrow', { style:{ marginTop:'14px' } }, 'Minerals'),
+      h('p', { style:{ fontSize:'13.5px', color:'var(--ink-2)', marginTop:'3px' } }, C.mineral));
+    list.replaceChildren(...CRYSTALS.map((c, i) => h('button.clue', {
+      'aria-current': String(i === cur),
+      onclick: () => { cur = i; scene.show(i); show(); } },
+      h('span.cn', String(i + 1)), h('span', c.sys))));
+  }
+
+  const node = h('div.lab-split',
+    h('div.scene', stage,
+      h('div.hud.tl', h('span.hud-tag', 'idealised habit')),
+      h('div.hud.br', h('span.hud-tag', 'drag to rotate'))),
+    h('div.stack', { style:{ gap:'12px' } },
+      info,
+      h('div.card', h('div.eyebrow', { style:{ marginBottom:'8px' } }, 'The seven systems'), list)));
+  show();
+  return { node, scene };
+}
+
+/* ------------------------------------------------- dashboard globe hero */
+export function globeHero(){
+  const stage = h('div.stage');
+  const cap = h('p', { style:{ fontSize:'14px', color:'var(--ink-2)' } },
+    'Fourteen plate boundaries and fourteen real earthquakes, drawn in your browser. Spin it, then click a line.');
+  const scene = tectonicGlobe(stage, { onSelect: sel => {
+    if (!sel) return;
+    cap.textContent = sel.type === 'quake'
+      ? `${sel.data.name}, ${sel.data.year} — magnitude ${sel.data.mag.toFixed(1)}. Open the Field Lab for the full record.`
+      : `${sel.data.name} — ${sel.kind.label.toLowerCase()}. Open the Field Lab for the detail.`;
+  } });
+  const node = h('div.globe-hero',
+    h('div.copy',
+      h('div.eyebrow', 'Field Lab'),
+      h('h2', { style:{ fontSize:'23px', letterSpacing:'-.02em' } }, 'The planet, as an instrument'),
+      cap,
+      h('div.row', { style:{ gap:'8px', marginTop:'6px', flexWrap:'wrap' } },
+        h('button.btn.btn-primary', { onclick: () => { location.hash = '#/lab'; } },
+          icon('dash'), 'Open the Field Lab'),
+        h('button.btn', { onclick: () => { location.hash = '#/lab/core'; } }, 'See a core sample'))),
+    stage);
+  onTeardown(() => scene.destroy());
+  return node;
 }
