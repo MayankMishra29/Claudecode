@@ -1,0 +1,209 @@
+<meta charset="utf-8">
+<title>Stratum Field Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+<div id="app">
+  <nav id="rail" aria-label="Sections">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div>
+        <div class="brand-name">Stratum</div>
+        <div class="brand-sub">Field Lab</div>
+      </div>
+    </div>
+    <div id="railnav"></div>
+    <div id="railfoot"></div>
+  </nav>
+
+  <div id="main">
+    <header id="topbar">
+      <h1 id="pagetitle">Dashboard</h1>
+      <div class="topmeta" id="topmeta"></div>
+    </header>
+    <main id="view" tabindex="-1"></main>
+  </div>
+</div>
+
+<nav id="tabbar" aria-label="Sections"></nav>
+<div id="toasts" aria-live="polite"></div>
+
+<script type="module">
+import { h, $, icon, S, save, toast, modal, touchStreak, levelOf, isPaid, runTeardowns } from './core.js';
+import {
+  dashboard, quizHome, quizRun, crossword, studyAids, blogList, article,
+  resources, mentor, community, careers, progress, plans, fieldLab,
+} from './views.js';
+
+/* ------------------------------------------------------------------ nav */
+const NAV = [
+  { group:'Study', items:[
+    { id:'',           label:'Dashboard',  ico:'dash',  band:'var(--azurite)',    title:'Dashboard' },
+    { id:'quiz',       label:'Quizzes',    ico:'quiz',  band:'var(--c-gis)',      title:'Quizzes' },
+    { id:'crossword',  label:'Crossword',  ico:'grid',  band:'var(--c-geology)',  title:'Daily crossword' },
+    { id:'lab',        label:'Field Lab',  ico:'shelf', band:'var(--c-earth)',    title:'Field Lab', tail:'3D' },
+    { id:'study',      label:'Study aids', ico:'cards', band:'var(--c-earth)',    title:'Glossary and flashcards' },
+  ]},
+  { group:'Library', items:[
+    { id:'blog',       label:'Articles',   ico:'book',  band:'var(--limonite)',   title:'Articles' },
+    { id:'resources',  label:'Resources',  ico:'shelf', band:'var(--limonite)',   title:'Resource shelf' },
+  ]},
+  { group:'People', items:[
+    { id:'mentor',     label:'Mentor',     ico:'bot',   band:'var(--azurite)',    title:'Subject mentor' },
+    { id:'community',  label:'Community',  ico:'chat',  band:'var(--malachite)',  title:'Community' },
+    { id:'careers',    label:'Careers',    ico:'case',  band:'var(--malachite)',  title:'Careers' },
+  ]},
+  { group:'Account', items:[
+    { id:'progress',   label:'Progress',   ico:'chart', band:'var(--azurite)',    title:'Progress and analytics' },
+    { id:'plans',      label:'Plans',      ico:'crown', band:'var(--sulfur)',     title:'Plans and pricing' },
+  ]},
+];
+const FLAT = NAV.flatMap(g => g.items);
+
+function buildNav(){
+  const rail = $('#railnav'); rail.replaceChildren();
+  for (const g of NAV){
+    rail.append(h('div.navgroup',
+      h('div.eyebrow', g.group),
+      g.items.map(it => h('button.navbtn', {
+        style:{ '--band': it.band }, 'data-id': it.id,
+        onclick: () => { location.hash = '#/' + it.id; },
+      }, icon(it.ico), h('span', it.label),
+         it.tail ? h('span.tail', it.tail)
+           : (it.id === 'plans' && !isPaid()) ? h('span.tail', 'free') : null))));
+  }
+  const tabs = $('#tabbar'); tabs.replaceChildren();
+  for (const it of FLAT.filter(i => ['', 'lab', 'quiz', 'crossword', 'study', 'mentor', 'progress'].includes(i.id))){
+    tabs.append(h('button.tabbtn', { 'data-id': it.id, onclick: () => { location.hash = '#/' + it.id; } },
+      icon(it.ico), h('span', it.label)));
+  }
+}
+
+function buildTop(){
+  const box = $('#topmeta'); box.replaceChildren();
+  box.append(
+    h('span.chip.flame', icon('flame'), h('span', S.streak + 'd')),
+    h('span.chip.xp', icon('bolt'), h('span', S.xp.toLocaleString())),
+    h('span.chip.tier', icon('crown'), h('span', S.tier === 'free' ? 'Free' : S.tier[0].toUpperCase() + S.tier.slice(1))),
+    h('button.btn.btn-sm.btn-ghost', { id:'themebtn', title:'Switch theme', onclick: cycleTheme },
+      icon(currentTheme() === 'dark' ? 'moon' : 'sun')));
+
+  const foot = $('#railfoot'); foot.replaceChildren(
+    h('div.row', { style:{ gap:'9px' } },
+      h('div.avatar', S.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()),
+      h('div', { style:{ minWidth:'0', flex:'1' } },
+        h('div', { style:{ fontSize:'13px', fontWeight:'600', overflow:'hidden', textOverflow:'ellipsis' } }, S.name),
+        h('div.eyebrow', `Level ${levelOf(S.xp)} · ${S.tier}`))),
+    S.tier === 'free'
+      ? h('button.btn.btn-sm.btn-primary.btn-block', { onclick: () => { location.hash = '#/plans'; } },
+          icon('crown'), 'Go Pro')
+      : h('button.btn.btn-sm.btn-block', { onclick: () => { location.hash = '#/plans'; } }, 'Manage plan'));
+}
+
+/* ---------------------------------------------------------------- theme */
+function currentTheme(){
+  const set = document.documentElement.getAttribute('data-theme');
+  if (set) return set;
+  return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+function cycleTheme(){
+  const next = currentTheme() === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  S.theme = next; save(); buildTop();
+}
+if (S.theme) document.documentElement.setAttribute('data-theme', S.theme);
+
+/* --------------------------------------------------------------- router */
+let currentView = null;
+function route(){
+  const raw = (location.hash || '#/').replace(/^#\/?/, '');
+  const seg = raw.split('/').filter(Boolean);
+  const key = seg[0] || '';
+
+  if (currentView) currentView.dispatchEvent(new Event('stratum:teardown'));
+  runTeardowns();
+
+  let node, title;
+  switch (key){
+    case '':          node = dashboard();               title = 'Dashboard'; break;
+    case 'quiz':
+      if (seg[1]){ node = quizRun(seg[1], seg[2]); title = 'Quiz'; }
+      else { node = quizHome(); title = 'Quizzes'; }
+      break;
+    case 'crossword': node = crossword();               title = 'Daily crossword'; break;
+    case 'lab':       node = fieldLab(seg[1]);          title = 'Field Lab'; break;
+    case 'study':     node = studyAids();               title = 'Glossary and flashcards'; break;
+    case 'blog':      node = seg[1] ? article(seg[1]) : blogList(); title = 'Articles'; break;
+    case 'resources': node = resources();               title = 'Resource shelf'; break;
+    case 'mentor':    node = mentor();                  title = 'Subject mentor'; break;
+    case 'community': node = community();               title = 'Community'; break;
+    case 'careers':   node = careers();                 title = 'Careers'; break;
+    case 'progress':  node = progress();                title = 'Progress and analytics'; break;
+    case 'plans':     node = plans();                   title = 'Plans and pricing'; break;
+    default:          node = h('div.empty', 'That page does not exist.'); title = 'Not found';
+  }
+  currentView = node;
+  $('#pagetitle').textContent = title;
+  document.title = title === 'Dashboard' ? 'Stratum Field Lab' : title + ' · Stratum Field Lab';
+  const view = $('#view');
+  view.replaceChildren(node);
+  view.scrollTop = 0; window.scrollTo(0, 0);
+
+  for (const b of document.querySelectorAll('.navbtn, .tabbtn')){
+    b.setAttribute('aria-current', b.dataset.id === key ? 'page' : 'false');
+  }
+  buildTop();
+}
+
+window.addEventListener('hashchange', route);
+window.addEventListener('stratum:render', () => { buildNav(); route(); });
+
+/* ----------------------------------------------------------- onboarding */
+function onboard(){
+  const steps = [
+    { t:'Welcome to Stratum Field Lab',
+      b:'A study environment for geology, earth science and GIS. Quizzes that adapt to you, a fresh crossword every day, a glossary with spaced repetition, long-form articles, and a subject mentor.' },
+    { t:'Everything runs on this device',
+      b:'There is no account and no server. Your XP, streak, answers and notes are stored in this browser only, and nothing you type is sent anywhere. Clearing site data resets it.' },
+    { t:'The engine adapts',
+      b:'Answer a few questions and the difficulty tracks your accuracy. The dashboard then points you at your weakest topic instead of leaving you to guess.' },
+    { t:'Free and paid tiers are both live',
+      b:'This is a working demo of the freemium model: switching plans flips the feature flags locally so you can see exactly what each tier gates. No payment is taken.' },
+  ];
+  let i = 0;
+  modal((box, close) => {
+    const body = h('div');
+    const dots = h('div.row', { style:{ gap:'5px' } });
+    function draw(){
+      const s = steps[i];
+      body.replaceChildren(
+        h('div.eyebrow', `Step ${i + 1} of ${steps.length}`),
+        h('h2', { style:{ fontSize:'22px', margin:'8px 0 8px' } }, s.t),
+        h('p', { style:{ color:'var(--ink-2)', fontSize:'15px' } }, s.b));
+      dots.replaceChildren(...steps.map((_, n) => h('span', { style:{ width:'6px', height:'6px',
+        borderRadius:'50%', background: n === i ? 'var(--azurite)' : 'var(--line-strong)' } })));
+    }
+    const next = h('button.btn.btn-primary', { onclick: () => {
+      if (i < steps.length - 1){ i++; draw(); next.textContent = i === steps.length - 1 ? 'Start studying' : 'Next'; }
+      else { S.onboarded = true; save(); close(); }
+    } }, 'Next');
+    box.append(body, h('div.row', { style:{ marginTop:'20px', gap:'10px' } }, dots,
+      h('div', { style:{ marginLeft:'auto', display:'flex', gap:'8px' } },
+        h('button.btn.btn-ghost', { onclick: () => { S.onboarded = true; save(); close(); } }, 'Skip'),
+        next)));
+    draw();
+  });
+}
+
+/* ------------------------------------------------------------------ boot */
+function start(){
+  buildNav();
+  if (!location.hash) location.hash = '#/';
+  route();
+  if (!S.onboarded) setTimeout(onboard, 350);
+}
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start();
+window.claude?.hot?.snapshot?.(() => ({ hash: location.hash }));
+</script>
