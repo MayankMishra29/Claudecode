@@ -34,9 +34,11 @@ otherwise.
 
 ## Commits
 
-- Primary author **must** be Sergey: every `git commit` needs
-  `--author="Sergey Bulaev <s@bulaev.org>"`. The harness defaults to the
-  Claude identity if you forget; verify with
+- This is Mayank Mishra's fork of `sergebulaev/linkedin-skills`. Primary
+  author **must** be Mayank: every `git commit` needs
+  `--author="Mayank Mishra <mayankmishra29@users.noreply.github.com>"`.
+  Never credit Sergey Bulaev for work done in this fork; upstream commits
+  keep their original authorship. Verify with
   `git log -1 --format='%an <%ae>'` before pushing.
 - Co-author trailer (`Co-Authored-By: Claude ...`) is fine and welcomed.
 - Verify locally before push: build never breaks, no broken refs in

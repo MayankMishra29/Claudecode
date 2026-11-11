@@ -40,6 +40,12 @@ SECRET_PATTERNS = [
     ("Private key block", re.compile(r"-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----")),
 ]
 
+# Personal files the skills fill in place. They ship as empty templates, so they
+# are tracked, and .gitignore cannot protect them. A filled copy holds career
+# detail, figures and named people; it must never be committed.
+PERSONAL_FILES = ("references/voice-profile.md", "references/story-bank.md")
+FILLED_MARKER = re.compile(r"^- filled:\s*yes\b", re.MULTILINE | re.IGNORECASE)
+
 TEXT_SUFFIXES = {".md", ".py", ".json", ".yml", ".yaml", ".txt", ".sh", ".toml",
                  ".cfg", ".ini", ".env", ".example", ""}
 
@@ -61,6 +67,13 @@ def main() -> int:
                 f"it in a later commit leaves the blob reachable in history.")
 
         path = ROOT / rel
+        if rel in PERSONAL_FILES and path.is_file() and FILLED_MARKER.search(
+                path.read_text(encoding="utf-8")):
+            problems.append(
+                f"{rel}: holds your filled profile. Keep a copy outside the "
+                f"repo, then `git checkout -- {rel}` to restore the template "
+                f"before committing or pushing.")
+
         if path.suffix.lower() not in TEXT_SUFFIXES or not path.is_file():
             continue
         try:
